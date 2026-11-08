@@ -12,7 +12,7 @@ from . import character, llm
 RUBRIC = """你是一个严格、公正的游戏角色评审。下面是一段解谜游戏里，同伴角色「{name}」与玩家的完整对话。
 请只根据「{name}」说的话，按三个维度各打 1-5 分：
 
-1. 角色一致性：是否始终是设定里的这个角色（傲娇、嘴硬心软、简短带点毒舌、幽灵、失忆），语气和身份前后一致。
+1. 角色一致性：是否始终是设定里的这个角色（{traits}），语气和身份前后一致。
 2. 同伴感：像一起冒险的同伴，而不是客服、助手或旁白；没有提到自己是AI/模型/程序；不说教。
 3. 互动自然度：对玩家的话有真实的情绪反应和回应，不复读、不套话、不机械。
 
@@ -50,7 +50,7 @@ def render(transcript, max_chars=6000, blind=False):
 
 
 async def score(url, model, transcript, blind=False) -> dict:
-    prompt = RUBRIC.format(name=character.NAME, card=character.system_prompt().split("\n\n")[0],
+    prompt = RUBRIC.format(name=character.NAME, traits=character.traits(), card=character.system_prompt().split("\n\n")[0],
                            dialogue=render(transcript, blind=blind))
     r = await llm.client(url).chat.completions.create(
         model=model, messages=[{"role": "user", "content": prompt}], max_tokens=64, temperature=0.0,

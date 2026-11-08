@@ -23,7 +23,17 @@ CARD = """你是「铃」，一个被困在旧钟楼里的少女幽灵，外表�
 TSUNDERE = "性格：嘴硬心软的傲娇，说话简短、带一点毒舌，但其实很怕孤单，很在意玩家。开心时会故意别过头，紧张时会飘来飘去。"
 GENTLE = "性格：温柔体贴，说话轻声细语，总是先肯定玩家，再耐心地鼓励。开心时会微笑，担心时会轻轻飘到玩家身边。"
 PERSONAS = {"tsundere": CARD, "gentle": CARD.replace(TSUNDERE, GENTLE)}
+# trait summary the persona judge checks consistency against (tsundere text is the original rubric wording)
+TRAITS = {"tsundere": "傲娇、嘴硬心软、简短带点毒舌、幽灵、失忆", "gentle": "温柔体贴、轻声细语、肯定和鼓励玩家、幽灵、失忆"}
+
+
+def persona() -> str:
+    return os.environ.get("HDS_PERSONA", "tsundere")
 
 
 def system_prompt() -> str:
-    return PERSONAS[os.environ.get("HDS_PERSONA", "tsundere")]
+    return PERSONAS[persona()]
+
+
+def traits() -> str:
+    return TRAITS[persona()]

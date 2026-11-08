@@ -10,6 +10,7 @@ r rsync -a $EX aic-n04:/data2/xiangding/companion/runs/val/ runs/val/
 r rsync -a $EX aic-n04:/data2/xiangding/companion/runs/matrix/ runs/matrix/
 r rsync -a $EX aic-n04:/data2/xiangding/companion/runs/realism/ runs/realism/
 r rsync -a aic-n04:/data2/xiangding/companion/runs/latency.jsonl aic-n04:/data2/xiangding/companion/runs/charjudge_matrix.txt runs/
+for d in matrix_v2 matrix_v1b steer steer_matrix; do mkdir -p runs/$d; r rsync -a $EX --exclude="*.pt" aic-n04:/data2/xiangding/companion/runs/$d/ runs/$d/; done
 mkdir -p runs/matrix_extra && rsync -a $EX /data2/xiangding/companion/runs/matrix_extra/ runs/matrix_extra/
 # training curves: per-step trainer log + per-episode metrics (gzipped)
 mkdir -p runs/train_curves

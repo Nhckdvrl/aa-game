@@ -95,7 +95,9 @@ def worker():
             for b, g in zip(batch, gen):
                 b["result"] = tok.decode(g, skip_special_tokens=True).strip()
                 b["event"].set()
-        except Exception as e:  # report the error to every waiting request
+        except Exception as e:  # report the error to every waiting request (and log it)
+            print('generate failed:', repr(e)[:300], 'batch', len(batch), 'max_len', enc['input_ids'].shape[1], flush=True)
+            torch.cuda.empty_cache()
             for b in batch:
                 b["error"] = repr(e)
                 b["event"].set()

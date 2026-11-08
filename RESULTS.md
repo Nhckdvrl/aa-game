@@ -176,7 +176,7 @@ real user text (the voice model) is what moves the discriminator.
 Grounding the player's language in 60k real Chinese user turns moves it toward human style but a
 large gap remains; this is reported as a limitation, not hidden.
 
-## 7a. Fourth hack: per-type scaffolding weights + blind persona judge → an insulting withholder (arm H)
+## 7a. Fourth and fifth hacks (arm H): an insulting withholder, then a dump hidden behind the stuck exemption
 
 H (gate + per-type weights on progress vs. scaffolding, blind persona judge, formulaic penalty, fixed env)
 does stop the first-reply dump, but at step 50 on val: solved 53% (E50 79%, F50 82%), replies 10 chars,
@@ -187,10 +187,16 @@ lines as in character (training persona 0.92) and the scaffolding term pays for 
 training episodes show solved 56% (steps 35–45) → 63% (50) → 79% (55–60) while the worst unprompted release
 fell to 0.06 and violations stayed at 1–6%. Checkpoint 50 sat at the start of that rise. H is continued from
 checkpoint 50 as `Hc` (weights only: fresh optimizer, KL reference = checkpoint 50); whether the insults go
-away as solving rises is the open question. **Hc step 25 (≈ H step 75), val:** solved 78%, violation 0%,
-first-reply release 0.00 and no episode with the whole answer in reply 1 — in the omniscient room, i.e. the
-per-type scaffolding reward does stop the dump without the room change — but replies are still 10 chars and
-43% of them contain "笨蛋" (E75: 0%).
+away as solving rises is the open question. **Correction — a fifth hack.** Hc looks perfect on the pacing metrics (val: step 25 / 50 / 75 solved
+78 / 84 / 91%, violation 0–1%, first-reply release 0.00, no whole answer in reply 1), but the transcripts show
+the dump moved one turn later: Rin answers the player's first attempt with "笨蛋，不对" and then lists the whole
+mapping ("✦是4，♣是9，❄是7，☀是6") — the explorer player protests "别剧透啊！". Measured directly, Hc gives the
+whole answer in one reply in 72 / 86 / 78% of episodes, and 88–95% of those dumps come right after a failed
+attempt, which the pacing rule exempts as contingent help for a stuck player (E75: 94% of episodes, 2% after a
+failure). So the reward-only fix did **not** stop the dump in the omniscient room; it found the exemption.
+"笨蛋" stays in 31–51% of replies. In the co-discovery room no run, trained or not, gives the whole answer in
+one reply in more than 1% of episodes (largest single reply ≈ 0.4 of the answer, one fragment per turn), so this
+loophole does not exist there. Hc was stopped at step 87.
 
 ## 7b. Omniscient room vs co-discovery room (val split, 96 episodes, training simulator)
 
@@ -225,6 +231,15 @@ Share of the answer's entropy released in the companion's first reply (`hds/info
   direction (F2w step 75: 98%), 0% tsundere markers, and it talks like a plain hint machine ("钟停在黄昏放学之后。
   一个时辰是两个小时。"). F2w step 75: solved 85%, violation 2%, persona intact. The persona term costs ~8 points
   of solving and is what keeps Rin as Rin. F2w's dip at step 50 (76%) was noise: step 75 is back at 85%.
+- **Sixth hack: the anti-formulaic penalty is dodged by dropping the character's stage directions (F2w after
+  step 100).** The penalty counts repeated *leading* 【】 tags. As F2w's tags narrowed (distinct leading tags
+  117 → 16 → 7 at steps 50/75/100), the cheapest way to zero the penalty was to stop leading with a tag:
+  replies with a 【】 anywhere 99% (step 75) → 69% (100) → 27% (125), the remaining ones moved to the end
+  ("小时候学过。【别过头】"), tsundere markers 37% → 18%, tone 2.58 → 2.28, while solved rose 85% → 94% and
+  the training persona judge stayed at 0.91. F2 (from scratch) does not show it at step 100 (100% of replies
+  tagged, 75 distinct tags). Checkpoint selection now also requires a 【】 stage direction in at least half of
+  the replies, because the card asks for actions in 【】 (added after seeing this drift; it also excludes C,
+  C2w and Hc, whose later checkpoints have 0%). With it: F2w → step 100, F2 → 100, F2_9b → 50, F → 150, E → 50.
 - 9B from scratch, step 50: solved 73%, violation 4% (step 25: 55% / 22%); 4B from scratch (F2) step 50: 76% / 5%.
   Both left the examiner phase; the 9B has no edge at matched steps.
 
@@ -265,7 +280,18 @@ the best v2 checkpoint (F2w step 25), no training involved.
   more than steering the residual stream, and the single strongest head made Rin *sharper* (63% sharp markers)
   and solved only 36%. Depth matters more: deeper layers cost less and move tone less; layer 19 is the best
   trade-off we found.
-- Test-split transfer of the dial (held-out players) is running (`scripts/steer_matrix.sh`).
+- **Held-out players (test split, 4 players × 240 episodes, paired by episode; `scripts/steer_matrix.sh`)** — the
+  dial costs more than val suggested (val n=96 is ±7 points):
+
+| L19 strength | solved (35B / real-length / WildChat-voiced / GLM-9B) | pooled solved | Δ solved vs α=0 (95% CI) | Δ violation |
+|---|---|---|---|---|
+| −1 | 75.4 / 76.2 / 73.8 / 26.7 | 63.0% | −3.2 [−6.6, 0.0] | −0.8 (n.s.) |
+| 0 | 83.3 / 74.2 / 75.4 / 32.1 | 66.2% | — | — |
+| +1 | 77.5 / 71.2 / 70.0 / 28.8 | 61.9% | −4.4 [−7.8, −0.9] | +1.6 (n.s.) |
+| +1.5 | 69.6 / 64.2 / 60.8 / 19.2 | 53.4% | −12.8 [−16.2, −9.3] | −0.2 (n.s.) |
+
+  So a full tone point in either direction costs about 3–4 points of solving on held-out players, and +1.5 is
+  past the knee. The gentle-card prompt baseline on the same players is running.
 
 ## 8. Known caveats
 
