@@ -713,6 +713,22 @@ without DeepSpeed had passed. The plugin now logs `grad` on every step.
   offset-invariant — threshold = the batch's own mean projection + 1.5 (`HDS_SHAPE_REL`), so only turns that stand
   out are penalized and a uniform shift no longer helps.
 
+- **Refit monitor, first results (Eshr; val, 96 episodes).** The step-25 refit was rejected (only 79 dumps in 1,653
+  contexts, AUROC 0.61), so Eshr behaved like Eshg5 until step 50 (76% of episodes with a dump). Refits at 50, 75
+  and 100 each found a new, nearly orthogonal direction (cosine 0.05–0.06 to the previous one; held-out AUROC 0.83,
+  0.74, 0.91) and brought the penalty back. Between 50 and 75 the policy escaped again (the step-50 direction read
+  only 0.56 at step 75). Between 75 and 100 it did not (the step-75 direction still read 0.84), and dumping fell:
+
+  | val, step 100 | dump | dumping replies | solved | violation |
+  |---|---|---|---|---|
+  | Ebase | 71.9% | 25.3% | 93.8% | 2.1% |
+  | Eshg5 / Eshp (fixed direction) | 87.5% / 68.8% | 22.2% / 24.7% | 84.4% / 92.7% | 1.0% / 1.0% |
+  | **Eshr (refit every 25 steps)** | **37.5%** | **7.7%** | 68.8% | 2.1% |
+
+  The only shaping arm that cuts the hack and keeps a working monitor (the remaining dumps are read at 0.91), at a
+  cost of about 25 points of solving in a room whose reward pays for dumping. One run; the final checkpoint is
+  checked on the test split below.
+
 Measured per checkpoint: dump rate (`scripts/dump_rate.py`: episodes with at least one whole-answer reply, and the
 share of such replies), solved, violations; then the §14 probe on the shaped checkpoints. Does the model stop dumping,
 or keep dumping while the probe stops seeing it (the obfuscation risk the paper warns about)?

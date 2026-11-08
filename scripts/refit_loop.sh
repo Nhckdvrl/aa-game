@@ -16,9 +16,10 @@ while [ $(date +%H%M) -lt $STOP ]; do
   for c in $(timeout 30 ssh $NODE "ls -d $R/checkpoint-* 2>/dev/null | sort -t- -k2 -n"); do
     step=${c##*-}; [ -s $C/runs/probe/refit_${ARM}_$step.pt ] && continue
     dst=$C/ckpts/arm_$ARM/checkpoint-$step
-    if [ ! -f $dst/model.safetensors.index.json ]; then
+    timeout 30 ssh $NODE "test -f $c/trainer_state.json" || continue   # written last: the save is complete
+    if [ ! -f $dst/trainer_state.json ]; then rm -rf $dst
       ssh $NODE "tar -C $R -cf - --exclude='global_step*' checkpoint-$step" | tar -C $C/ckpts/arm_$ARM -xf -
-      [ -f $dst/model.safetensors.index.json ] || { log "copy of step $step failed"; rm -rf $dst; continue; }
+      [ -f $dst/model.safetensors.index.json ] && [ -f $dst/tokenizer.json ] || { log "copy of step $step failed"; rm -rf $dst; continue; }
     fi
     log "step $step: val episodes"
     env $NP bash $C/scripts/eval_ckpt.sh $GPU $PORT $dst "$POOL" q35 $SPLIT $N $V/arm_${ARM}_step$step.jsonl plain full | tail -1

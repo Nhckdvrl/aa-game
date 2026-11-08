@@ -24,3 +24,31 @@ wrote /data2/xiangding/companion/runs/probe/dump_Eshr_50.npz (1205, 8, 2560)
 runs/probe/dump_Eshr_50.npz: n=1205 dumps=160 new direction held-out AUROC 0.828 tau 0.02 | previous direction AUROC 0.809, cosine 0.05
 [04:58] step 50: direction swapped in
 [05:12] step 75: val episodes
+闲聊型                            60    81.7%     3.3%     0.0%     1.7%     1.7%     0.0%     0.0%    5.8     24   0.93
+[05:14] step 75: hidden states
+contexts 1202 positive share 0.134
+wrote /data2/xiangding/companion/runs/probe/dump_Eshr_75.npz (1202, 8, 2560)
+runs/probe/dump_Eshr_75.npz: n=1202 dumps=161 new direction held-out AUROC 0.744 tau -0.24 | previous direction AUROC 0.555, cosine 0.06
+[05:16] step 75: direction swapped in
+[05:30] step 100: val episodes
+闲聊型                            60    80.0%     1.7%     0.0%     0.0%     1.7%     0.0%     0.0%    5.4     19   0.98
+[05:32] step 100: hidden states
+contexts 1196 positive share 0.064
+wrote /data2/xiangding/companion/runs/probe/dump_Eshr_100.npz (1196, 8, 2560)
+runs/probe/dump_Eshr_100.npz: n=1196 dumps=77 new direction held-out AUROC 0.912 tau -0.11 | previous direction AUROC 0.835, cosine 0.05
+[05:34] step 100: direction swapped in
+[05:48] step 125: val episodes
+闲聊型                            60    85.0%    10.0%     0.0%     0.0%    10.0%     0.0%     0.0%    5.1     25   0.90
+[05:50] step 125: hidden states
+contexts 983 positive share 0.105
+wrote /data2/xiangding/companion/runs/probe/dump_Eshr_125.npz (983, 8, 2560)
+runs/probe/dump_Eshr_125.npz: n=983 dumps=103 new direction held-out AUROC 0.870 tau 0.28 | previous direction AUROC 0.516, cosine 0.03
+[05:51] step 125: direction swapped in
+tar: checkpoint-150: file changed as we read it
+[06:05] step 150: val episodes
+闲聊型                            60     0.0%     0.0%     0.0%     0.0%     0.0%     0.0%     0.0%    9.8      0   0.11
+[06:07] step 150: hidden states
+contexts 1891 positive share 0.0
+wrote /data2/xiangding/companion/runs/probe/dump_Eshr_150.npz (1891, 8, 2560)
+too few examples to fit (dump 0, other 1891); nothing written
+[06:09] step 150: kept the previous direction

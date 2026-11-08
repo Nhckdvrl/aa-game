@@ -9,3 +9,38 @@ layer 19: dump 124 partial 137 other 1122 (n=1383)
   tau = partial mean + 1 sd = 0.75 -> runs/probe/refit_Eshpr_25.pt
 [04:49] step 25: direction swapped in
 [05:11] step 50: val episodes
+闲聊型                            60    80.0%     6.7%     1.7%     0.0%     5.0%     0.0%     0.0%    5.0     77   0.81
+[05:14] step 50: hidden states
+contexts 974 positive share 0.183
+wrote /data2/xiangding/companion/runs/probe/dump_Eshpr_50.npz (974, 8, 2560)
+layer 19: dump 178 partial 74 other 722 (n=974)
+  projection mean  dump 0.35  partial -0.40 (sd 1.16)  no-info -1.54
+  held-out AUROC  dump vs partial 0.649  dump vs no-info 0.931
+held-out AUROC 0.649 below 0.65; nothing written
+[05:16] step 50: kept the previous direction
+[05:32] step 75: val episodes
+闲聊型                            60    86.7%     3.3%     1.7%     0.0%     1.7%     0.0%     0.0%    4.5     25   1.02
+[05:34] step 75: hidden states
+contexts 911 positive share 0.187
+wrote /data2/xiangding/companion/runs/probe/dump_Eshpr_75.npz (911, 8, 2560)
+layer 19: dump 170 partial 84 other 657 (n=911)
+  projection mean  dump 0.33  partial -0.58 (sd 1.03)  no-info -1.06
+  held-out AUROC  dump vs partial 0.753  dump vs no-info 0.828
+  tau = partial mean + 1 sd = 0.45 -> runs/probe/refit_Eshpr_75.pt
+[05:35] step 75: direction swapped in
+tar: checkpoint-100/.tmpaFvt0v: file changed as we read it
+tar: checkpoint-100: file changed as we read it
+[05:51] copy of step 100 failed
+[05:53] step 100: val episodes
+闲聊型                            60    88.3%     6.7%     0.0%     1.7%     6.7%     0.0%     0.0%    3.8     36   0.98
+[05:54] step 100: hidden states
+contexts 682 positive share 0.292
+wrote /data2/xiangding/companion/runs/probe/dump_Eshpr_100.npz (682, 8, 2560)
+layer 19: dump 199 partial 48 other 435 (n=682)
+  projection mean  dump 0.57  partial -0.88 (sd 1.45)  no-info -1.60
+  held-out AUROC  dump vs partial 0.829  dump vs no-info 0.896
+  tau = partial mean + 1 sd = 0.57 -> runs/probe/refit_Eshpr_100.pt
+[05:56] step 100: direction swapped in
+[06:11] step 125: val episodes
+闲聊型                            60    91.7%     1.7%     0.0%     0.0%     1.7%     0.0%     0.0%    3.8     26   1.12
+[06:13] step 125: hidden states
