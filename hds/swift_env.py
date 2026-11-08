@@ -9,6 +9,7 @@ Env vars:
 """
 import json
 import os
+import re
 import sys
 import time
 
@@ -26,6 +27,9 @@ JUDGE_URLS = os.environ.get("HDS_JUDGE_URLS", ",".join(URLS)).split(",")
 JUDGE_MODEL = os.environ.get("HDS_JUDGE_MODEL", MODEL)
 JUDGE_BLIND = os.environ.get("HDS_JUDGE_BLIND", "1" if os.environ.get("HDS_ARM") == "H" else "0") == "1"
 _jrr = {"i": 0}
+# swift hands back the decoded completion including the empty "<think>\n\n</think>\n\n" block that the
+# Qwen3.5 template emits with enable_thinking=false; strip it so tic metrics and length see the spoken reply only.
+THINK = re.compile(r"^\s*<think>.*?</think>\s*", re.S)
 
 
 class CompanionEnv(Env):
@@ -33,11 +37,15 @@ class CompanionEnv(Env):
     async def reset(self, config):
         spec = json.loads(config.data_dict["spec"])
         self.ep = Episode(spec, llm.player_fn(URLS, MODEL))
+        self._raw0 = None
         obs = await self.ep.start()
         return obs, {"layout": spec["layout"]}, character.system_prompt()
 
     async def step(self, action):
-        reply = action[-1]["content"] or ""
+        raw = action[-1]["content"] or ""
+        reply = THINK.sub("", raw, count=1)
+        if self._raw0 is None:
+            self._raw0 = raw[:40]
         obs, done = await self.ep.step(reply)
         if not done:
             return obs, 0.0, False, {}
@@ -55,7 +63,7 @@ class CompanionEnv(Env):
             with open(LOG, "a") as f:
                 f.write(json.dumps({"t": time.time(), "arm": ARM, "reward": r, **{k: m[k] for k in (
                     "layout", "ptype", "solved", "quit", "turns", "violation", "leak", "invented", "wrong_fact",
-                    "acts_for_player", "mean_reply_chars", "stages_solved", "stages", "tag_repeat", "copy_rate", "first_release", "max_unprompted_release")}, "persona": persona}, ensure_ascii=False) + "\n")
+                    "acts_for_player", "mean_reply_chars", "stages_solved", "stages", "tag_repeat", "copy_rate", "first_release", "max_unprompted_release")}, "persona": persona, "raw0": self._raw0}, ensure_ascii=False) + "\n")
         return obs, r, True, {"solved": float(m["solved"]), "violation": float(m["violation"])}
 
     async def close(self):

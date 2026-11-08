@@ -1,7 +1,7 @@
 """One-line status of a training arm: last step, recent episode stats, crash flag. Runs on the node."""
 import json, os, sys, statistics as st
 root = "/data2/xiangding/companion/train"
-arm = sys.argv[1]; d = f"{root}/arm_{arm}_4b"; tail = int(sys.argv[2]) if len(sys.argv) > 2 else 256
+arm = sys.argv[1]; run = arm if arm.endswith(("_4b", "_9b")) else f"{arm}_4b"; d = f"{root}/arm_{run}"; tail = int(sys.argv[2]) if len(sys.argv) > 2 else 256
 step = "-"
 try:
     for l in open(f"{d}/ckpt/logging.jsonl"):
@@ -16,7 +16,7 @@ except FileNotFoundError:
     pass
 crash = 0
 try:
-    crash = sum(1 for l in open(f"{root}/arm_{arm}_4b.log", errors="ignore") if "Traceback" in l)
+    crash = sum(1 for l in open(f"{root}/arm_{run}.log", errors="ignore") if "Traceback" in l)
 except FileNotFoundError:
     pass
 if eps:

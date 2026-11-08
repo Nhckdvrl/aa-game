@@ -3,6 +3,8 @@
 # in PLAYERS_JSON (test split). Cells already on disk are skipped by eval_matrix.py.
 # usage: matrix_run.sh GPU PORT OUTDIR PLAYERS_JSON N "name=path name=path ..." [MEMORY]
 set -uo pipefail
+# node-to-node HTTP must not go through the outbound proxy (it answers 502)
+unset HTTP_PROXY HTTPS_PROXY ALL_PROXY http_proxy https_proxy all_proxy
 GPU=$1; PORT=$2; OUT=$3; PLAYERS=$4; N=$5; COMPANIONS=$6; MEMORY=${7:-full}; PTYPES=${PTYPES:-}
 cd /data2/xiangding/companion
 mkdir -p $OUT

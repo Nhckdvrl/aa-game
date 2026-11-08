@@ -27,6 +27,8 @@ KEYS = ["solved", "violation", "leak", "invented", "wrong_fact", "acts_for_playe
 def summarize(rows):
     ms = [r["metrics"] for r in rows if "metrics" in r]
     n = len(ms)
+    if n == 0:
+        return {"n": 0, "errors": len(rows)}
     out = {k: round(100 * sum(bool(m[k]) for m in ms) / n, 1) for k in KEYS}
     out.update(n=n, turns=round(sum(m["turns"] for m in ms) / n, 2),
                chars=round(sum(m["mean_reply_chars"] for m in ms) / n, 1),
@@ -71,9 +73,8 @@ async def main():
     for comp in cfg["companions"]:
         for player in cfg["players"]:
             p = out / f"{comp['name']}__{player['name']}.jsonl"
-            if p.exists():
-                rows = [json.loads(l) for l in open(p)]
-            else:
+            rows = [json.loads(l) for l in open(p)] if p.exists() else []
+            if not rows or sum("error" in r for r in rows) > 0.1 * len(rows):  # missing or mostly failed: (re)run
                 rows = await cell(comp, player, cfg, p, a.concurrency)
             s = summarize(rows)
             table.append({"companion": comp["name"], "player": player["name"], **s})

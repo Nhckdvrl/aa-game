@@ -183,3 +183,11 @@ large gap remains; this is reported as a limitation, not hidden.
   simulators (122B, GLM-4-9B, WildChat-voiced player, unseen player types) is the next step.
 - Eval decodes at temperature 0.7, training at 1.0; replies are shorter at 0.7.
 - CharacterJudge's public rubric rewards long replies, so it is used for evaluation only.
+- Env bug found and fixed at 15:25 on 11-08: swift passes each completion to the env with the empty
+  `<think>\n\n</think>\n\n` block that the Qwen3.5 template emits when thinking is off. Arms A–F saw it in
+  training: verbosity counted 19 extra characters, the simulated player and persona judge saw the block, and
+  the leading-tag regex never matched, so **F's formulaic penalty only had its copy component** (tag_repeat
+  was 0 in all 11k F training episodes; validation of the same checkpoints shows tags on ~50% of replies).
+  The env now strips the block (`hds/swift_env.py`, raw prefix logged as `raw0`). H, G, F2w and the v2 runs
+  C2/F2/F2_9b (restarted, old runs in `train/failed/*_thinkprefix`) train with the fix. Evaluation was never
+  affected (served checkpoints return the reply without the block).
