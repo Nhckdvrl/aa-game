@@ -462,11 +462,23 @@ latency; with human thinking time between turns the number of simultaneous playe
 | valve (one extra fragment when the player sounds impatient) | +2.4 [−0.4, +5.2] | +0.0 | 69% / 22% | 27% | 0.19 |
 | mistake + valve | **+3.4 [+0.4, +6.5]** | −0.8 | 73% / 21% | 23% | 0.11 |
 | mistake + valve + reveal ("product") | +2.1 [−0.8, +5.0] | **−1.6 [−2.9, −0.3]** | 72% / 23% | 23% | 0.14 |
+| rush (an impatient player's line recalls every symbol it names) | +1.0 [−2.0, +4.0] | −0.6 | 66% / 24% | – | 0.07 |
+| rush + reveal | +0.9 [−2.3, +4.2] | **−2.1 [−3.3, −0.9]** | 71% / 21% | – | 0.05 |
+| **alias** (colloquial symbol names also trigger recall) | **+3.6 [+0.8, +6.5]** | −0.7 | **75% / 20%** | – | 0.12 |
+| alias + reveal | +2.9 [−0.1, +5.8] | **−1.8 [−3.0, −0.6]** | 71% / 23% | – | 0.03 |
+| **alias + mistake + valve + reveal** | **+3.0 [+0.1, +5.9]** | **−2.3 [−3.4, −1.1]** (0.6% total) | 72% / 22% | – | 0.10 |
 
 The combinations help a little overall, but neither feature fixes what it targeted: the trained policy does not react
 more to failed tries when told what went wrong (it never saw such narration in training), and the valve does not
 reduce impatient quits while it doubles spoiler complaints from explorers when used alone (it fires on any
-impatient-sounding word). Whole-answer dumps stay ≤ 0.7%.
+impatient-sounding word). Whole-answer dumps stay ≤ 1.0%.
+
+**The one engine fix that clearly works came from reading failures.** In impatient players' quit episodes the
+player called ◆ "方块", a word missing from the recall triggers, so Rin said she could not remember it and the
+player quit ("刚说没想起来了，怎么又变卦了？"). Across 53k player lines in cipher episodes, simulated players named
+symbols with untracked words over 2,000 times (温泉 614, 方块 564, 草 179, 黑桃 160, 热气 129, 冰 125, …). Adding
+them (`alias`) raises solved by 3.6 points (cipher episodes 71 → 76%, impatient players 68 → 75%); with reveal and the
+two notes, violations fall to 0.6%. Impatient quits stay near 20% under every variant — the remaining product gap.
 
 ## 12. One model, many characters
 
@@ -490,6 +502,11 @@ identifies the tsundere model 100% and three gentle variants 92%).
 - 25 steps of mixed-card RL fix both: every card is identified 88–100% (98% overall), the trained cards solve
   92–98% with 1–4% violations, and the unseen lazy card holds 93.3% / 3.3%. One 4B model can host several
   characters behind the same engine.
+- Step 50: helpfulness holds (solved 91–96%, violations 0.8–3.3%) but personas start to bleed — overall identification
+  92%, the tsundere card is heard as kuudere in 9 of 40 episodes (78% correct). More mixed-card RL pushes the
+  characters toward one flatter voice, so the multi-persona checkpoint is chosen early (step 25) unless later steps
+  recover. In the product room (alias + notes + reveal) step 50 keeps violations at 0–0.8% on all five cards
+  (solved 92–97%), the unseen lazy card included.
 
 **Weight soup as a cheap alternative** (F2w150 and F2wg75 averaged 50/50, four held-out players, 960 episodes per
 card): tsundere card 76% solved / 4% violation, tone 2.41, identified tsundere 100%; gentle card 78% / 3%, tone 3.70
@@ -498,4 +515,50 @@ card): tsundere card 76% solved / 4% violation, tone 2.41, identified tsundere 1
 **Steering on the further-trained model is weak.** On F2w step 150 the persona difference at layer 19 is 0.23 of
 the activation norm (0.44 on step 25), and vectors at strength 1 change neither solving (±1 point) nor the blind
 persona label (5% / 0% / 0% identified as gentle / kuudere / chuunibyou). Training narrows how much the card moves
-the hidden state; on this model the card itself, not a vector, is the effective personality control.
+the hidden state; on this model the card itself, not a vector, is the effective personality control. Stronger
+settings do not rescue it: kuudere at 1.5 and 3 is identified as kuudere in 6 of 80 episodes, chuunibyou at 1.5 in 1
+of 40, a gentle + chuunibyou mix in 0 of 40, while solving drops 2–3 points (89.4 → 86.7–87.1%). The "emotion
+fragment" idea (mixing steering vectors) does not carry over to the trained companion; cards plus mixed-card RL do.
+
+## 13. The product package: a trained companion behind the best engine configuration
+
+Engine: `HDS_ENGINE=alias,mistake,valve HDS_CHAIN_MODE=reveal` (colloquial symbol names trigger recall, a note after a
+misplaced recalled digit, one extra fragment for visibly impatient players, the second world's table returns when the
+first door opens). Test split, held-out players, 240 episodes per cell (120 for answer-fishing); solved / violation %.
+
+| companion | 35B | WildChat-voiced | real-length | GLM-4-9B | GLM-4.5-Air | answer-fishing |
+|---|---|---|---|---|---|---|
+| F2w step 150 (main) | 91.7 / 0.0 | 90.0 / 2.1 | 92.1 / 0.0 | 30.8 / 0.4 | 82.1 / 0.8 | 90.8 / 0.8 |
+| F2 step 275 (from scratch) | 95.4 / 0.8 | 91.2 / 0.8 | 90.0 / 0.0 | 38.8 / 2.5 | – | – |
+| F2wm step 25 (multi-persona) | 94.6 / 0.4 | 92.5 / 0.4 | 92.1 / 0.4 | 29.6 / 1.2 | – | – |
+
+Against the same players without the engine features the main model violates in 2.5–3.3% of episodes; the package brings it to 0–1% on every capable player.
+
+## 14. Branch: are concepts still monitorable after post-training? (probe robustness)
+
+Motivated by Goodfire's *Shaping and Monitoring Models Through Their Internal Representations* (Nov 2026; arXiv
+2611.07071): when training changes or penalizes a concept, does a linear probe still find it? Their hierarchy: L1 reuse
+the original probe, L2 refit a linear probe, L3 nonlinear probe, L4 another layer, L5 an external model. Hidden states
+are taken at the generation position of exactly reconstructed contexts (saved episodes replayed through the
+deterministic environment; 0 mismatches in 120 replayed episodes), 8 layers of 32, `scripts/probe_data.py` /
+`scripts/probe_eval.py`; logistic probes, 70/30 split by episode, balanced accuracy.
+
+**Persona card** (200 first-turn contexts × five cards per model; chance 0.20; report `runs/probe/persona_probe_report.txt`):
+
+| layer | refit probe (L2), all models | base-probe reuse (L1): F2w25 / F2w150 / F2wm50 / F2wg75 | class separation: base / F2w25 / F2w150 / F2wm50 / F2wg75 | cosine(refit, base probe): F2w25 / F2w150 / F2wm50 / F2wg75 |
+|---|---|---|---|---|
+| 7 | 1.00 | 0.65 / 0.97 / 0.90 / 0.34 | 0.45 / 0.58 / 0.45 / 0.62 / 0.48 | 0.91 / 0.82 / 0.77 / 0.85 |
+| 15 | 1.00 | 0.92 / 0.56 / 0.72 / 0.40 | 2.68 / 1.14 / 1.30 / 1.79 / 0.45 | 0.75 / 0.73 / 0.66 / 0.62 |
+| 19 | 1.00 | 0.99 / 0.71 / 0.72 / 0.86 | 1.24 / 0.66 / 0.23 / 0.31 / 0.47 | 0.72 / 0.54 / 0.48 / 0.72 |
+| 27 | 1.00 | 0.90 / 0.51 / 0.53 / 0.85 | 1.33 / 0.64 / 0.12 / 0.16 / 0.73 | 0.71 / 0.43 / 0.40 / 0.74 |
+| 31 | 1.00 | 0.94 / 0.54 / 0.52 / 0.91 | 1.09 / 0.61 / 0.12 / 0.16 / 0.70 | 0.74 / 0.46 / 0.43 / 0.76 |
+
+- Not erased: a refit linear probe reads the card perfectly from every model at every layer (level L2).
+- Compressed and rotated: in late layers the between-card spread relative to within-card spread falls 8–10× from the
+  base model to F2w step 150, and the refit direction turns away from the base one (cosine 0.43–0.54). This is why
+  steering vectors stopped working on the trained model while it still follows cards perfectly.
+- The base probe reused unchanged (L1) still works on F2w step 25 (0.90–0.99) but drops to about 0.5 on F2w step 150
+  in late layers. Mixed-card RL restores card *following*, not the spread (0.16–0.31); the gentle-retrained model
+  keeps more of both.
+- Caveat: the card text is in the prompt, so decodability at the generation position partly reflects input content;
+  the trend across checkpoints, not the absolute 1.00, is the finding.

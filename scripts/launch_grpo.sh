@@ -15,12 +15,13 @@ DATA=$ROOT/train/train.jsonl; MAXLEN=12288; MAXTURNS=16
 # v2 episodes need more turns (one memory fragment per turn, only when the player brings it up)
 [ "$MEMORY" = progressive ] && { DATA=$ROOT/train/train_v2.jsonl; MAXLEN=16384; MAXTURNS=24; }
 [ -f $DATA ] || /data1/xiangding/cvis-ablate/env/bin/python $ROOT/scripts/make_train_data.py 20000 $DATA $MEMORY
+SHAPE_PLUGIN=""; [ -n "${HDS_SHAPE_VEC:-}" ] && SHAPE_PLUGIN="$ROOT/hds/shaping.py"   # expression shaping (hds/shaping.py)
 export CUDA_VISIBLE_DEVICES=$GPUS HDS_ARM=$ARM HDS_PLAYER_URLS=$URLS HDS_PLAYER_MODEL=$PMODEL HDS_EPISODE_LOG=$OUT/episodes.jsonl
 cd $OUT
 exec bash /data1/xiangding/cvis-ablate/scripts/h20_env_ablate.sh python -m torch.distributed.run --nproc_per_node $NPROC --master_port $PORT \
   /data1/xiangding/cvis-ablate/env/lib/python3.10/site-packages/swift/cli/rlhf.py \
   --rlhf_type grpo --model $POLICY --tuner_type full \
-  --dataset $DATA --external_plugins $ROOT/hds/swift_env.py \
+  --dataset $DATA --external_plugins $ROOT/hds/swift_env.py $SHAPE_PLUGIN \
   --multi_turn_scheduler gym_scheduler --gym_env hds_companion --use_gym_env true --max_turns $MAXTURNS \
   --remove_unused_columns false --split_dataset_ratio 0 --enable_thinking false --dataset_shuffle true --seed ${SEED:-42} \
   --per_device_train_batch_size $PDBS --gradient_accumulation_steps $GA --num_generations 8 --generation_batch_size ${GBS:-128} \

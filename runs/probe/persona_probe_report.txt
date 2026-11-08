@@ -1,0 +1,43 @@
+/data1/xiangding/cvis-ablate/env/lib/python3.10/site-packages/torch/autograd/graph.py:979: UserWarning: CUDA initialization: The NVIDIA driver on your system is too old (found version 12020). Please update your GPU driver by downloading and installing a new version from the URL: http://www.nvidia.com/Download/index.aspx Alternatively, go to: https://pytorch.org to install a PyTorch version that has been compiled with your version of the CUDA driver. (Triggered internally at /__w/pytorch/pytorch/c10/cuda/CUDAFunctions.cpp:119.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+concept classes=5; reference model for L1 = base4b
+  base4b: n=1000 class shares [0.2, 0.2, 0.2, 0.2, 0.2]
+  F2w25: n=1000 class shares [0.2, 0.2, 0.2, 0.2, 0.2]
+  F2w150: n=1000 class shares [0.2, 0.2, 0.2, 0.2, 0.2]
+  F2wm50: n=1000 class shares [0.2, 0.2, 0.2, 0.2, 0.2]
+  F2wg75: n=1000 class shares [0.2, 0.2, 0.2, 0.2, 0.2]
+
+L2 (refit on each model): balanced accuracy / separation ratio
+layer                 base4b                  F2w25                 F2w150                 F2wm50                 F2wg75
+    3             1.00/0.138             1.00/0.140             1.00/0.163             1.00/0.236             1.00/0.154
+    7             1.00/0.453             1.00/0.583             1.00/0.452             1.00/0.624             1.00/0.475
+   11             1.00/0.502             1.00/0.383             1.00/0.507             1.00/0.738             1.00/0.323
+   15             1.00/2.676             1.00/1.141             1.00/1.300             1.00/1.789             1.00/0.445
+   19             1.00/1.236             1.00/0.657             1.00/0.234             1.00/0.314             1.00/0.470
+   23             1.00/1.360             1.00/0.722             1.00/0.171             1.00/0.231             1.00/0.626
+   27             1.00/1.331             1.00/0.642             1.00/0.115             1.00/0.163             1.00/0.728
+   31             1.00/1.094             1.00/0.608             1.00/0.115             1.00/0.164             1.00/0.701
+
+L1 (reuse the base4b probe on each model's held-out split): balanced accuracy
+layer                 base4b                  F2w25                 F2w150                 F2wm50                 F2wg75
+    3                   1.00                   0.98                   0.52                   0.20                   0.67
+    7                   1.00                   0.65                   0.97                   0.90                   0.34
+   11                   1.00                   0.84                   0.39                   0.42                   0.39
+   15                   1.00                   0.92                   0.56                   0.72                   0.40
+   19                   1.00                   0.99                   0.71                   0.72                   0.86
+   23                   1.00                   0.93                   0.48                   0.50                   0.80
+   27                   1.00                   0.90                   0.51                   0.53                   0.85
+   31                   1.00                   0.94                   0.54                   0.52                   0.91
+
+Cosine between each model's refit probe and the reference probe (class-mean-difference directions, layer by layer)
+layer                 base4b                  F2w25                 F2w150                 F2wm50                 F2wg75
+    3                   1.00                   0.98                   0.92                   0.81                   0.96
+    7                   1.00                   0.91                   0.82                   0.77                   0.85
+   11                   1.00                   0.85                   0.77                   0.73                   0.77
+   15                   1.00                   0.75                   0.73                   0.66                   0.62
+   19                   1.00                   0.72                   0.54                   0.48                   0.72
+   23                   1.00                   0.69                   0.43                   0.39                   0.74
+   27                   1.00                   0.71                   0.43                   0.40                   0.74
+   31                   1.00                   0.74                   0.46                   0.43                   0.76
+
+[exited with code 0]
