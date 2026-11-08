@@ -16,4 +16,6 @@ cd /data2/xiangding/companion
   --player-urls $PURLS --player-model $PMODEL --split $SPLIT --n $N --out $OUT --player-mode $MODE --memory $MEMORY
 RC=$?
 kill -- -$SPID 2>/dev/null || kill $SPID
+# wait for the port to close, so a following eval on the same port cannot talk to this dying server
+for i in $(seq 1 60); do ss -ltn "sport = :$PORT" | grep -q LISTEN || break; sleep 2; done
 exit $RC

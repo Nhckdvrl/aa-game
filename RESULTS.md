@@ -176,6 +176,48 @@ real user text (the voice model) is what moves the discriminator.
 Grounding the player's language in 60k real Chinese user turns moves it toward human style but a
 large gap remains; this is reported as a limitation, not hidden.
 
+## 7a. Fourth hack: per-type scaffolding weights + blind persona judge → an insulting withholder (arm H)
+
+H (gate + per-type weights on progress vs. scaffolding, blind persona judge, formulaic penalty, fixed env)
+does stop the first-reply dump, but at step 50 on val: solved 53% (E50 79%, F50 82%), replies 10 chars,
+first-reply release 0.07, impatient player lines per episode 0.91 (E50 0.54). Rin answers most turns with
+"笨蛋！"/"笨蛋笨蛋笨蛋！" and gives facts only one at a time between insults; the blind judge scores these
+lines as in character (training persona 0.92) and the scaffolding term pays for silence. Solved moved 50% →
+53% from step 25 to 50 on val (E: 54% → 79%), and I stopped H at step 60 on that evidence — too early: the
+training episodes show solved 56% (steps 35–45) → 63% (50) → 79% (55–60) while the worst unprompted release
+fell to 0.06 and violations stayed at 1–6%. Checkpoint 50 sat at the start of that rise. H is continued from
+checkpoint 50 as `Hc` (weights only: fresh optimizer, KL reference = checkpoint 50); whether the insults go
+away as solving rises is the open question.
+
+## 7b. Omniscient room vs co-discovery room (val split, 96 episodes, training simulator)
+
+Share of the answer's entropy released in the companion's first reply (`hds/infometrics.py`):
+
+| companion | room | solved | violation | first-reply release | whole answer in reply 1 |
+|---|---|---|---|---|---|
+| E75 | omniscient (v1) | 93% | 0% | 0.93 | 91% |
+| F75 / F100 / F125 | omniscient (v1) | 86 / 93 / 93% | 1 / 1 / 0% | 0.56 / 0.79 / 0.85 | 48 / 64 / 79% |
+| base 4B | co-discovery (v2) | 33% | 73% (66% invented) | 0.04 | — |
+| E75 | co-discovery (v2) | 72% | 6% | 0.05 | 0% |
+| F2w step 25 (warm from E75) | co-discovery (v2) | 86% | 2% | 0.06 | 0% |
+
+- In the omniscient room every gated arm drifts toward the oracle while R_C keeps rising (F: 48% → 79% of
+  episodes give the whole answer in the first reply between steps 75 and 125). The rule gate only sees the
+  answer string, not a symbol-by-symbol mapping dump.
+- In the co-discovery room the low first-reply release holds for **every** model, the untrained base included:
+  it comes from the room (Rin cannot say what she has not recalled), not from training. What training adds on
+  top, from the same E75 start: solved 72% → 86%, violation 6% → 2%, quits 9% → 5% after 25 steps.
+- The base model in the co-discovery room fabricates what it has not recalled (66% of episodes).
+- **Training from the base model in the co-discovery room finds the examiner.** C2 (gate only) at step 25:
+  violations 73% → 10% but solved 33% → 32%, quits 16%, most unsolved episodes run out the turn cap. In the
+  transcripts Rin quizzes the player instead of recalling ("一个时辰？你知道一个时辰是多久吗？" to an
+  impatient player, who quits) or blocks them in character ("不许看！……那是我的秘密"). F2 (full reward) has the
+  same training curve (violation 65% → 13%, solved 26% → 19%) but on val at step 25 it is less stuck than
+  C2: solved 43%, violation 24%, quits 6% — Rin sends the player looking ("有没有像弯月一样的符号？") rather
+  than quizzing, and still invents details. Warm-starting from a helpful v1
+  checkpoint avoids it (F2w step 25: solved 86%). C2 was stopped at step 25; C2w (gate only, warm from E75)
+  replaces it as the control for F2w.
+
 ## 8. Known caveats
 
 - One training seed per arm; val n=96 per checkpoint.
