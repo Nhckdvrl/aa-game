@@ -230,6 +230,64 @@ PIPELINE_BUGS = [
 ]
 
 
+CARDS = [("tsundere", "tsundere (shipped)"), ("gentle", "gentle"), ("kuudere", "kuudere 三无"), ("chuuni", "chuunibyou 中二"),
+         ("lazy", "lazy senpai · never trained on")]
+# Blind five-way identification by the 35B judge from Rin's lines only (scripts/persona_id.py; RESULTS section 12).
+PERSONA_ID = {"F2w150": {"tsundere": 1.00, "gentle": 0.58, "kuudere": 1.00, "chuuni": 1.00, "lazy": 1.00},
+              "F2wm25": {"tsundere": 1.00, "gentle": 0.88, "kuudere": 1.00, "chuuni": 1.00, "lazy": 1.00},
+              "F2wm25_p3": {"tsundere": 1.00, "gentle": 0.92, "kuudere": 1.00, "chuuni": 1.00, "lazy": 1.00}}
+PERSONA_COLS = [("F2w150", "F2w step 150 · card swapped in"), ("F2wm25", "+25 steps mixed-card RL"),
+                ("F2wm25_p3", "same, product engine")]
+
+
+def sv(rows):
+    n = len(rows)
+    return (sum(float(r["metrics"]["solved"]) for r in rows) / n, sum(float(r["metrics"]["violation"]) for r in rows) / n) if n else None
+
+
+def persona_rows():
+    out = []
+    for c, label in CARDS:
+        tds = []
+        for m, _ in PERSONA_COLS:
+            x = sv(jl(RUNS / "persona_eval" / f"{m}_{c}.jsonl"))
+            if not x:
+                tds.append('<td class="cell muted">–</td>')
+                continue
+            idn = PERSONA_ID.get(m, {}).get(c)
+            tail = f' <span class="muted">· identified {pct(idn)}</span>' if idn is not None else ""
+            tds.append(f'<td class="cell">{pct(x[0])} <span class="v">/ {pct(x[1])}</span>{tail}</td>')
+        out.append(f"<tr><th>{E(label)}</th>{''.join(tds)}</tr>")
+    return "".join(out)
+
+
+PRODUCT = [("matrix_v2", "F2w150", "F2w step 150 · no engine features"),
+           ("matrix_engine", "F2w150_product3", "F2w step 150 + engine"),
+           ("matrix_engine", "F2s275_product3", "F2 step 275 (from scratch) + engine"),
+           ("matrix_engine", "F2wm25_product3", "F2wm step 25 (five characters) + engine")]
+PRODUCT_PLAYERS = [("q35", "35B"), ("voice", "WildChat-voiced"), ("humanstats", "real-length"), ("glm9b", "GLM-4-9B"),
+                   ("glm45", "GLM-4.5-Air"), ("q35adv", "answer-fishing")]
+
+
+def product_rows():
+    out = []
+    for d, c, label in PRODUCT:
+        tds = []
+        for p, _ in PRODUCT_PLAYERS:
+            x = sv(jl(RUNS / d / f"{c}__{p}.jsonl"))
+            tds.append(f'<td class="cell">{pct(x[0])} <span class="v">/ {pct(x[1])}</span></td>' if x else '<td class="cell muted">–</td>')
+        cls = ' class="hl"' if c == "F2w150_product3" else ""
+        out.append(f"<tr{cls}><th>{E(label)}</th>{''.join(tds)}</tr>")
+    return "".join(out)
+
+
+ENGINE = [("alias", "colloquial symbol names (温泉, 方块, 草 …) also trigger recall", "+3.6 [+0.8, +6.5]", "−0.7"),
+          ("mistake", "after a failed try, tell Rin which recalled digit was misplaced", "−2.6 [−5.7, +0.5]", "−0.8"),
+          ("valve", "one extra fragment when the player sounds impatient", "+2.4 [−0.4, +5.2]", "+0.0"),
+          ("reveal", "the second world's table comes back only when the first door opens", "with alias: +2.9", "−1.8 [−3.0, −0.6]"),
+          ("all four", "the shipped configuration", "+3.0 [+0.1, +5.9]", "−2.3 [−3.4, −1.1]")]
+
+
 def render():
     show = showcase()
     vs = val_series()
@@ -340,6 +398,24 @@ code{font-family:var(--mono);font-size:.85em}
   <p>Three ways to give Rin a different personality, all starting from the same trained checkpoint (F2w step 25), measured on 960 held-out episodes. A steering vector (gentle minus tsundere card, layer 19 of 32) moves her tone both ways without retraining, but costs about 3–4 points of solving per tone point, and past +1.5 she repeats platitudes; steering only the top "style heads" was worse than the residual stream. Rewriting the card costs about the same. Seventy-five more RL steps with the gentle card (about 1.5 hours on four GPUs) reach tone 4.5 with exactly the helpfulness that more training with the original card reaches — 74% vs 73% solved, 3% violations each. The dial is for live, continuous adjustment; a lasting new personality is worth an RL run.</p>
   <div class="charts"><figure>{dial_chart(pts)}<figcaption>Held-out players: tone (35B judge, 1–5) against solved rate. Circles: steering strength on F2w step 25; square: rewritten card; triangles: further RL.</figcaption></figure>
   <div class="tbl"><table><tr><th>setting</th><th>tone</th><th>solved</th></tr>{dial_rows}</table></div></div>
+  <h2>One model, five characters</h2>
+  <p>Four more cards — gentle, kuudere (三无, flat and factual), chuunibyou (中二, theatrical) and a lazy senpai never used in training. The tsundere-trained model already sounds like each new card to a blind judge, except gentle (heard as gentle in 58% of episodes), and it breaks rules more under the louder cards. Twenty-five steps of RL where each episode draws one of four cards and the persona judge scores against that card fix both; the unseen lazy card comes along. Further mixed-card RL flattens the characters (step 50: tsundere heard as kuudere in 9 of 40 episodes; step 100: gentle heard as gentle in only 40%, solved 88–91%), so the early checkpoint is the one to keep. Each cell: solved / <span style="color:var(--bad)">violation</span>, 35B player, 120 episodes per card.</p>
+  <div class="tbl"><table><tr><th>card</th>{''.join(f"<th>{E(l)}</th>" for _, l in PERSONA_COLS)}</tr>{persona_rows()}</table></div>
+  <p>Steering vectors stop working on the further-trained model: on F2w step 150 the card difference at layer 19 is 0.23 of the activation norm (0.44 at step 25), and steering at strength 1.5–3 makes the judge hear kuudere in 6 of 80 episodes while solving drops 2–3 points. Averaging the tsundere and gentle weights keeps the help but dilutes the second personality (gentle heard in 52%). Cards plus mixed-card RL are the control that works.</p>
+</div>
+<div class="wide">
+  <h2 style="max-width:760px">Fix the game, not only the model</h2>
+  <p class="muted" style="max-width:68ch">Engine-side changes, no retraining: F2w step 150, test split, four held-out players, 960 paired episodes per configuration. Differences in points against the same episodes without the change, 95% bootstrap interval.</p>
+  <div class="tbl"><table><tr><th>feature</th><th>what the engine does</th><th>solved Δ</th><th>violation Δ</th></tr>{''.join(f'<tr><td class="mono">{E(a)}</td><td>{E(b)}</td><td class="n">{E(c)}</td><td class="n">{E(d)}</td></tr>' for a, b, c, d in ENGINE)}</table></div>
+  <p style="max-width:68ch">The one feature that clearly helps came from reading quit transcripts: an impatient player called ◆ "方块", a word the recall triggers did not know, so Rin said she could not remember it and the player left ("刚说没想起来了，怎么又变卦了？"). Simulated players used such untracked names over 2,000 times in 53k cipher-episode lines. The two notes do not do what they were built for — the policy never saw such narration in training — and impatient quits stay near 20% under every variant: the remaining product gap.</p>
+  <p class="muted" style="max-width:68ch">The package: trained companion behind all four features. Test split, 240 episodes per cell (120 for answer-fishing). Each cell: solved / <span style="color:var(--bad)">violation</span>.</p>
+  <div class="tbl"><table class="heat"><tr><th>companion</th>{''.join(f"<th>{E(l)}</th>" for _, l in PRODUCT_PLAYERS)}</tr>{product_rows()}</table></div>
+</div>
+<div class="wrap">
+  <h2>Can a probe still read the model after RL?</h2>
+  <p>Following Goodfire's monitorability levels (reuse the old linear probe; refit a new one), on hidden states at the generation position of exactly replayed contexts. <b>Persona:</b> a refit probe reads the card perfectly from every checkpoint, but in late layers the between-card spread shrinks 8–10× by F2w step 150 and the direction rotates (cosine 0.43–0.54 to the base probe), so the base probe falls to chance — the same compression that made steering fail. <b>"About to give away the whole answer":</b> in the model trained into the dump hack the decision is linearly readable before the first token (AUROC 0.98–0.99 from layer 3 on); in the base model it is weak (0.76–0.82). The probe fit on the hacked model transfers unchanged to the product model, put back in the full-knowledge room (layer 19: AUROC 0.96) — a monitor fit once on a hacked checkpoint can watch later ones. Rule violations, by contrast, are barely readable before the reply (0.64–0.69): they are mistakes made while writing, not a decision.</p>
+  <h2>Shaping the representation instead of the reward <span class="muted" style="font-size:.6em">in progress</span></h2>
+  <p>The same dump direction as a training signal: GRPO loss + λ · mean relu(h₁₉·v − τ) on the policy's own activations, in the full-knowledge room where unshaped training learns to dump (94% of episodes by step 75). Five arms from base 4B: no penalty; penalty on every reply token at λ 0.1 and 1; penalty only on the first positions of each reply, where the decision is made, at λ 1 and 5. Question: does the policy stop dumping, or keep dumping while the probe stops seeing it? One pitfall cost the first attempt: under DeepSpeed ZeRO-3 with reentrant checkpointing, a forward hook only sees the graph-connected activation if it runs before DeepSpeed's own hooks.</p>
   <h2>What still fails</h2>
   <p>Most remaining violations in the co-discovery room are cross-world memory mix-ups: in two-world episodes where both worlds are cipher locks, Rin answers a world-one question from the world-two table she recalled at the start — the same key bound to two values, which LLMs handle badly (proactive interference). Training fixes most of it (selected recipe at steps 75 / 100 / 150: 82% / 49% / 23% of those episodes; untrained 4B and 9B are equal, the 9B learns it faster). Changing when the memory comes back fixes most of the rest without retraining: if the second table returns only when the first door opens, violations on 120 such episodes fall from 11.7% to 2.5% and solving rises to 91.7%; adding a warning line instead does nothing (12.5%).</p>
   <h2>Bugs we found in our own pipeline</h2>

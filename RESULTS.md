@@ -507,8 +507,9 @@ identifies the tsundere model 100% and three gentle variants 92%).
   characters toward one flatter voice, so the multi-persona checkpoint is chosen early (step 25) unless later steps
   recover. In the product room (alias + notes + reveal) steps 25 and 50 keep violations at 0–0.8% on all five
   cards (step 25: solved 95.0–96.7%; step 50: 91.7–96.7%), the unseen lazy card included.
-- Step 100 confirms the trend: solved falls to 88–91% on the trained cards and chuunibyou violations rise to 6.7%.
-  Step 25 is the multi-persona checkpoint.
+- Step 100 confirms the trend: solved falls to 88–91% on the trained cards, chuunibyou violations rise to 6.7%, and
+  the gentle card drifts back toward the original character (identified gentle 40%, heard as tsundere in 17 of 40).
+  Step 25 is the multi-persona checkpoint; behind the product engine it is identified 98% overall (gentle 92%).
 
 **Weight soup as a cheap alternative** (F2w150 and F2wg75 averaged 50/50, four held-out players, 960 episodes per
 card): tsundere card 76% solved / 4% violation, tone 2.41, identified tsundere 100%; gentle card 78% / 3%, tone 3.70

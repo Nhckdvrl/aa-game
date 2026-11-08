@@ -1,0 +1,7 @@
+card        n accuracy  confusion
+tsundere   40     100%  tsundere:40
+gentle     40      40%  tsundere:17 gentle:16 kuudere:7
+kuudere    40     100%  kuudere:40
+chuuni     40     100%  chuuni:40
+lazy       40     100%  lazy:40
+overall accuracy 88% (chance 20%)
