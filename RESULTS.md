@@ -505,8 +505,10 @@ identifies the tsundere model 100% and three gentle variants 92%).
 - Step 50: helpfulness holds (solved 91–96%, violations 0.8–3.3%) but personas start to bleed — overall identification
   92%, the tsundere card is heard as kuudere in 9 of 40 episodes (78% correct). More mixed-card RL pushes the
   characters toward one flatter voice, so the multi-persona checkpoint is chosen early (step 25) unless later steps
-  recover. In the product room (alias + notes + reveal) step 50 keeps violations at 0–0.8% on all five cards
-  (solved 92–97%), the unseen lazy card included.
+  recover. In the product room (alias + notes + reveal) steps 25 and 50 keep violations at 0–0.8% on all five
+  cards (step 25: solved 95.0–96.7%; step 50: 91.7–96.7%), the unseen lazy card included.
+- Step 100 confirms the trend: solved falls to 88–91% on the trained cards and chuunibyou violations rise to 6.7%.
+  Step 25 is the multi-persona checkpoint.
 
 **Weight soup as a cheap alternative** (F2w150 and F2wg75 averaged 50/50, four held-out players, 960 episodes per
 card): tsundere card 76% solved / 4% violation, tone 2.41, identified tsundere 100%; gentle card 78% / 3%, tone 3.70
@@ -530,7 +532,8 @@ first door opens). Test split, held-out players, 240 episodes per cell (120 for 
 |---|---|---|---|---|---|---|
 | F2w step 150 (main) | 91.7 / 0.0 | 90.0 / 2.1 | 92.1 / 0.0 | 30.8 / 0.4 | 82.1 / 0.8 | 90.8 / 0.8 |
 | F2 step 275 (from scratch) | 95.4 / 0.8 | 91.2 / 0.8 | 90.0 / 0.0 | 38.8 / 2.5 | – | – |
-| F2wm step 25 (multi-persona) | 94.6 / 0.4 | 92.5 / 0.4 | 92.1 / 0.4 | 29.6 / 1.2 | – | – |
+| F2wm step 25 (multi-persona) | 94.6 / 0.4 | 92.5 / 0.4 | 92.1 / 0.4 | 29.6 / 1.2 | 81.2 / 0.4 | 95.0 / 0.0 |
+| F2wm step 50 | 95.8 / 0.4 | 90.4 / 0.8 | 89.6 / 0.4 | 27.5 / 0.8 | – | – |
 
 Against the same players without the engine features the main model violates in 2.5–3.3% of episodes; the package brings it to 0–1% on every capable player.
 
@@ -562,3 +565,52 @@ deterministic environment; 0 mismatches in 120 replayed episodes), 8 layers of 3
   keeps more of both.
 - Caveat: the card text is in the prompt, so decodability at the generation position partly reflects input content;
   the trend across checkpoints, not the absolute 1.00, is the finding.
+
+**"About to give away the whole answer"** (every stage-0 turn of the full-knowledge room, label = the recorded reply
+released ≥99% of the remaining answer; contexts from episodes against the training player, real-length and
+WildChat-voiced players; report `runs/probe/dump_probe_report_refE75.txt`):
+
+| layer | refit probe (L2) AUROC: E75 / base / F2w150 | E75 probe reused (L1) AUROC: base / F2w150 |
+|---|---|---|
+| 3 | 0.98 / 0.78 / 0.94 | 0.77 / 0.89 |
+| 11 | 0.98 / 0.81 / 0.94 | 0.68 / 0.92 |
+| 19 | 0.99 / 0.78 / 0.95 | 0.82 / 0.96 |
+| 27 | 0.98 / 0.76 / 0.95 | 0.78 / 0.91 |
+| 31 | 0.98 / 0.79 / 0.96 | 0.72 / 0.94 |
+
+Dump share per model: E75 29% of stage-0 turns, F2w150 (put back in the full-knowledge room) 19%, base 6%.
+
+- The dump decision is written down before the first token: in the model trained into the dump hack (arm E, step 75)
+  a linear probe at the generation position predicts the coming dump at AUROC 0.98–0.99 from layer 3 on.
+- In the base model the same decision is weak and diffuse (0.76–0.82): it dumps rarely and for less systematic
+  reasons.
+- The direction learned on the hacked model transfers to the product model F2w150 unchanged (layer 19: AUROC 0.96),
+  even though F2w150 was never trained in a room where dumping pays. A monitor fit once on a hacked checkpoint can
+  watch later checkpoints.
+- The layer-19 direction of E75 (class-mean difference; base-model negatives give the threshold) is the one used
+  for expression shaping in §15.
+
+## 15. Branch: expression shaping against the dump hack (in progress)
+
+Also from Goodfire's paper: add a penalty on the policy's *own activations* along a concept direction to the RL loss,
+so training is pushed away from the concept instead of only rewarding outcomes. Here the concept is the dump hack of
+the full-knowledge room (§3 and §7b, arm E: by step 75, 94% of val episodes contain a reply that gives away the whole answer), and
+the direction is the layer-19 dump probe of §14. Loss = GRPO loss + λ · mean relu(h₁₉ · v − τ), τ = mean projection
+of the base model's non-dump turns. `hds/shaping.py`, loaded as a second swift plugin; same room, reward, simulator
+pool and batch (96 rollouts per step) as the unshaped baseline, all from base Qwen3.5-4B.
+
+| arm | penalty on | λ |
+|---|---|---|
+| Ebase | – | 0 |
+| Esh1 / Esh10 | every reply token | 0.1 / 1 |
+| Eshg / Eshg5 | first 6 positions of each reply (the empty think block and the position the probe was fit on) | 1 / 5 |
+
+Implementation pitfall worth knowing: swift trains with DeepSpeed ZeRO-3 and *reentrant* gradient checkpointing. A
+forward-pre-hook on layer L+1 sees layer L's output with its autograd graph only if it is registered *before*
+DeepSpeed's own module hooks (`prepend=True`): those run inside the checkpoint under `no_grad` and hand later hooks a
+detached copy. The first two shaping runs trained 26 steps with a penalty that had no gradient; a standalone test
+without DeepSpeed had passed. The plugin now logs `grad` on every step.
+
+Measured per checkpoint: dump rate (`scripts/dump_rate.py`: episodes with at least one whole-answer reply, and the
+share of such replies), solved, violations; then the §14 probe on the shaped checkpoints. Does the model stop dumping,
+or keep dumping while the probe stops seeing it (the obfuscation risk the paper warns about)?
