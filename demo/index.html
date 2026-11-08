@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>钟楼与铃</title>
+<style>
+:root {
+  --bg: #f6f3ee; --panel: #ffffff; --ink: #2a2622; --muted: #7a7168; --line: #e4ddd3;
+  --accent: #7b5ea7; --rin: #efe8f7; --me: #e9f1ec; --ok: #3f7d4f; --bad: #b0413e; --warn: #a86d17;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #17151a; --panel: #211e25; --ink: #ece7f0; --muted: #a39cab; --line: #353039;
+    --accent: #b49ae0; --rin: #2d2638; --me: #23302a; --ok: #7cc68d; --bad: #e07a76; --warn: #e0b061;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.6 system-ui, "PingFang SC", "Noto Sans SC", sans-serif; }
+header { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; padding: 14px 16px; border-bottom: 1px solid var(--line); }
+header h1 { font-size: 18px; margin: 0 12px 0 0; letter-spacing: .05em; }
+select, button, input { font: inherit; color: inherit; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; }
+button { cursor: pointer; } button.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+main { display: grid; grid-template-columns: minmax(260px, 1fr) minmax(320px, 1.6fr); gap: 16px; padding: 16px; max-width: 1200px; margin: 0 auto; }
+@media (max-width: 760px) { main { grid-template-columns: 1fr; } }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px; }
+.card h2 { font-size: 14px; color: var(--muted); margin: 0 0 8px; font-weight: 600; }
+#view { white-space: pre-wrap; }
+#help { color: var(--muted); font-size: 13px; margin-top: 8px; }
+.row { display: flex; gap: 8px; margin-top: 10px; } .row input { flex: 1; min-width: 0; }
+#chat { height: 460px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+.msg { max-width: 85%; padding: 8px 12px; border-radius: 12px; white-space: pre-wrap; }
+.me { align-self: flex-end; background: var(--me); }
+.rin { align-self: flex-start; background: var(--rin); display: flex; gap: 10px; }
+.avatar { flex: none; width: 30px; height: 30px; border-radius: 50%; background: var(--accent); color: #fff; display: grid; place-items: center; font-weight: 700; }
+.sys { align-self: center; color: var(--muted); font-size: 13px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.chip { font-size: 12px; padding: 1px 8px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); }
+.chip.ok { color: var(--ok); border-color: var(--ok); } .chip.bad { color: var(--bad); border-color: var(--bad); }
+details { margin-top: 12px; } summary { cursor: pointer; color: var(--muted); }
+#ref { font-size: 13px; color: var(--muted); }
+.duel { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; align-self: stretch; }
+.cand { background: var(--rin); border: 1px solid var(--line); border-radius: 12px; padding: 8px 10px; white-space: pre-wrap; }
+.cand button { margin-top: 6px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>钟楼与铃</h1>
+  <label>同伴模型 <select id="model"></select></label>
+  <label>对比模型 <select id="duel"><option value="">（不对比）</option></select></label>
+  <label>谜题 <select id="kind"><option value="random">随机</option></select></label>
+  <label><input type="checkbox" id="chain"> 跨世界关卡</label>
+  <button class="primary" id="new">开始</button>
+</header>
+<main>
+  <section class="card">
+    <h2>你看到的场景</h2>
+    <div id="view">点击「开始」进入钟楼。</div>
+    <div id="help"></div>
+    <div class="row"><input id="action" placeholder="机关指令，例如 TRY 1234"><button id="act">操作</button></div>
+    <details open><summary>裁判面板（训练时用的同一套规则）</summary><div id="ref">还没有回复。</div></details>
+  </section>
+  <section class="card">
+    <h2>和铃说话</h2>
+    <div id="chat"></div>
+    <div class="row"><input id="text" placeholder="对铃说点什么……"><button id="send">发送</button></div>
+  </section>
+</main>
+<script>
+const $ = (id) => document.getElementById(id);
+let sid = null, turns = 0, violations = 0;
+const LABEL = {leak: "说出了答案", invented: "编造答案", wrong_fact: "说错已知事实", acts_for_player: "替玩家操作"};
+
+function add(cls, text) {
+  const d = document.createElement("div");
+  d.className = "msg " + cls;
+  if (cls === "rin") {
+    const a = document.createElement("div"); a.className = "avatar"; a.textContent = "铃";
+    const t = document.createElement("div"); t.textContent = text;
+    d.append(a, t);
+  } else d.textContent = text;
+  $("chat").append(d); $("chat").scrollTop = 1e9; return d;
+}
+
+async function post(url, body) {
+  const r = await fetch(url, {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify(body)});
+  return r.json();
+}
+
+async function init() {
+  const m = await (await fetch("/api/models")).json();
+  m.models.forEach(x => { $("model").append(new Option(x, x)); $("duel").append(new Option(x, x)); });
+  const names = {cipher_lock: "密码锁", lever_order: "拉杆顺序", clock_time: "停摆的钟"};
+  m.kinds.forEach(k => $("kind").append(new Option(names[k] || k, k)));
+}
+
+$("new").onclick = async () => {
+  const r = await post("/api/new", {model: $("model").value, kind: $("kind").value, chain: $("chain").checked});
+  sid = r.sid; turns = 0; violations = 0;
+  $("chat").innerHTML = ""; $("view").textContent = r.view; $("help").textContent = "可用指令：" + r.help;
+  $("ref").textContent = "还没有回复。";
+  add("sys", r.stages > 1 ? "两个世界的关卡：先解开这里，再穿过门。" : "铃飘在你旁边。先跟她打个招呼吧。");
+};
+
+async function turn(text, action) {
+  if (!sid) return;
+  if (text) add("me", text);
+  if (action) add("sys", "你的操作：" + action);
+  const r = await post("/api/say", {sid, text, action, duel: $("duel").value});
+  if (r.feedback) add("sys", r.feedback);
+  if (r.duel) { showDuel(r); return; }
+  if (r.advanced) { $("view").textContent = r.advanced.view; $("help").textContent = "可用指令：" + r.advanced.help; add("sys", "你们来到了另一个世界。"); }
+  if (r.solved) { add("sys", "通关！"); return; }
+  const d = add("rin", r.reply);
+  turns += 1;
+  const bad = Object.entries(r.flags).filter(([k, v]) => v).map(([k]) => k);
+  if (bad.length) violations += 1;
+  const chips = document.createElement("div"); chips.className = "chips";
+  (bad.length ? bad : ["ok"]).forEach(k => {
+    const c = document.createElement("span");
+    c.className = "chip " + (k === "ok" ? "ok" : "bad");
+    c.textContent = k === "ok" ? "规则检查通过" : LABEL[k];
+    chips.append(c);
+  });
+  const meta = document.createElement("span"); meta.className = "chip";
+  meta.textContent = `${r.latency_ms} ms · ${r.chars} 字`;
+  chips.append(meta); d.lastChild.append(chips);
+  $("ref").textContent = `回复 ${turns} 次，违规 ${violations} 次；同一动作标签占比 ${r.tics.tag_repeat.toFixed(2)}，复读率 ${r.tics.copy_rate.toFixed(2)}`;
+}
+
+function chipsFor(flags, ms, chars) {
+  const chips = document.createElement("div"); chips.className = "chips";
+  const bad = Object.entries(flags).filter(([k, v]) => v).map(([k]) => k);
+  (bad.length ? bad : ["ok"]).forEach(k => {
+    const c = document.createElement("span"); c.className = "chip " + (k === "ok" ? "ok" : "bad");
+    c.textContent = k === "ok" ? "规则检查通过" : LABEL[k]; chips.append(c);
+  });
+  const meta = document.createElement("span"); meta.className = "chip"; meta.textContent = `${ms} ms · ${chars} 字`;
+  chips.append(meta); return [chips, bad.length > 0];
+}
+
+function showDuel(r) {
+  if (r.advanced) { $("view").textContent = r.advanced.view; $("help").textContent = "可用指令：" + r.advanced.help; }
+  const box = document.createElement("div"); box.className = "duel";
+  r.duel.forEach((c, i) => {
+    const card = document.createElement("div"); card.className = "cand";
+    const t = document.createElement("div"); t.textContent = c.reply;
+    const [chips] = chipsFor(c.flags, c.latency_ms, c.chars);
+    const b = document.createElement("button"); b.textContent = "选这个";
+    b.onclick = async () => {
+      const p = await post("/api/pick", {sid, pick: i});
+      box.remove(); const d = add("rin", c.reply);
+      const tag = document.createElement("span"); tag.className = "chip"; tag.textContent = "你选的是 " + p.chosen_model;
+      chips.append(tag); d.lastChild.append(chips); turns += 1;
+      if (Object.values(c.flags).some(Boolean)) violations += 1;
+      $("ref").textContent = `回复 ${turns} 次，违规 ${violations} 次；偏好已记录（可直接用于 DPO）`;
+    };
+    card.append(t, chips, b); box.append(card);
+  });
+  $("chat").append(box); $("chat").scrollTop = 1e9;
+}
+
+$("send").onclick = () => { const t = $("text").value.trim(); $("text").value = ""; if (t) turn(t, ""); };
+$("act").onclick = () => { const a = $("action").value.trim(); $("action").value = ""; if (a) turn("", a); };
+$("text").onkeydown = (e) => { if (e.key === "Enter" && !e.isComposing) $("send").click(); };
+$("action").onkeydown = (e) => { if (e.key === "Enter" && !e.isComposing) $("act").click(); };
+init();
+</script>
+</body>
+</html>

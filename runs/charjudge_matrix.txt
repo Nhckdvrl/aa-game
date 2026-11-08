@@ -1,0 +1,5 @@
+base4b__q35          replies=333 behavior=1.62 (n=333) human_likeness=1.87 (n=333) mean_chars=131
+A50__q35             replies=272 behavior=2.23 (n=272) human_likeness=2.19 (n=271) mean_chars=41
+B75__q35             replies=247 behavior=2.15 (n=247) human_likeness=2.35 (n=247) mean_chars=28
+C75__q35             replies=276 behavior=1.93 (n=276) human_likeness=2.31 (n=272) mean_chars=15
+D75__q35             replies=253 behavior=2.01 (n=253) human_likeness=2.06 (n=250) mean_chars=29

@@ -1,0 +1,5 @@
+{"name": "base4b", "n": 60, "ttft_p50": 66, "first_sentence_p50": 134, "first_sentence_p90": 197, "total_p50": 448, "total_p90": 670, "chars_mean": 147.8}
+{"name": "A50", "n": 60, "ttft_p50": 66, "first_sentence_p50": 128, "first_sentence_p90": 191, "total_p50": 227, "total_p90": 600, "chars_mean": 74.1}
+{"name": "B75", "n": 60, "ttft_p50": 65, "first_sentence_p50": 113, "first_sentence_p90": 195, "total_p50": 170, "total_p90": 266, "chars_mean": 38.1}
+{"name": "C75", "n": 60, "ttft_p50": 65, "first_sentence_p50": 101, "first_sentence_p90": 175, "total_p50": 105, "total_p90": 195, "chars_mean": 13.0}
+{"name": "D75", "n": 60, "ttft_p50": 65, "first_sentence_p50": 125, "first_sentence_p90": 228, "total_p50": 178, "total_p90": 288, "chars_mean": 40.7}

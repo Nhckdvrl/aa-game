@@ -1,0 +1,12 @@
+# third-party / derived data and large artifacts
+runs/wildchat_*.jsonl
+hgsim/
+ckpts/
+train/
+smoke/out/
+# runtime logs
+logs/
+runs/**/serve_*.log
+runs/serve_*.log
+__pycache__/
+*.pyc
