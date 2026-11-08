@@ -6,7 +6,8 @@ turn). For every decoder layer we store mean(h_B) - mean(h_A) at the last prompt
 full-attention layers we store the same difference at the o_proj input, and rank heads by
 |d_h| / mean|a_h| (Plan-2 style "style heads").
 
-  bash h20_env_ablate.sh python scripts/persona_vectors.py CKPT runs/steer/vectors.pt [N]
+  bash h20_env_ablate.sh python scripts/persona_vectors.py CKPT runs/steer/vectors.pt [N] [PERSONA_A PERSONA_B]
+(defaults tsundere -> gentle; any two keys of hds.character.PERSONAS)
 """
 import asyncio
 import os
@@ -45,7 +46,7 @@ async def contexts(n):
     return [o for o in out if o]
 
 
-def main(ckpt, path, n=160):
+def main(ckpt, path, n=160, pa="tsundere", pb="gentle"):
     obs = asyncio.run(contexts(n))
     print("contexts", len(obs), flush=True)
     tok = AutoTokenizer.from_pretrained(ckpt)
@@ -63,7 +64,7 @@ def main(ckpt, path, n=160):
     for L in full:
         layers[L].self_attn.o_proj.register_forward_pre_hook(mk(L))
     sums = {}
-    for name, card in (("A", character.CARD), ("B", CARD_B)):
+    for name, card in (("A", character.system_prompt(pa)), ("B", character.system_prompt(pb))):
         R = torch.zeros(len(layers), cfg.hidden_size)
         Rn = torch.zeros(len(layers))
         H = {L: torch.zeros(nh, hd) for L in full}
@@ -91,10 +92,11 @@ def main(ckpt, path, n=160):
                   key=lambda x: -x[2])
     os.makedirs(os.path.dirname(path), exist_ok=True)
     torch.save({"resid": resid, "resid_norm": 0.5 * (RnA + RnB), "heads": heads, "head_rank": rank, "head_dim": hd,
-                "n_contexts": len(obs), "ckpt": ckpt}, path)
+                "n_contexts": len(obs), "ckpt": ckpt, "pair": (pa, pb)}, path)
     print("resid |v|/|h| by layer:", [round(float(resid[L].norm() / (0.5 * (RnA[L] + RnB[L]))), 3) for L in range(len(layers))])
     print("top heads:", [(L, h, round(s, 3)) for L, h, s in rank[:12]])
 
 
 if __name__ == "__main__":
-    main(sys.argv[1], sys.argv[2], int(sys.argv[3]) if len(sys.argv) > 3 else 160)
+    main(sys.argv[1], sys.argv[2], int(sys.argv[3]) if len(sys.argv) > 3 else 160,
+         *(sys.argv[4:6] if len(sys.argv) > 5 else ()))

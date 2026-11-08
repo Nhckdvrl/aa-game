@@ -446,3 +446,56 @@ the best v2 checkpoint (F2w step 25), no training involved.
 | F2 9B step 50 | 55 ms | 120 ms | 200 ms | 36.6 |
 
 (Earlier v1 rows measured 65 ms first token under heavier node load; compare within a batch.)
+
+**Many players on one GPU** (`scripts/throughput.sh`; players send their turns back to back, no thinking time; p50 full
+reply / p90 / throughput): 4B — 1 player 81 / 113 ms; 8 players 255 / 375 ms, 29 replies/s; 32 players 719 / 1030 ms,
+41 replies/s; 64 players 1.35 / 1.92 s; saturates at ~45 replies/s. 9B — 1 player 169 ms; 8 players 479 ms, 16
+replies/s; 32 players 1.34 s; saturates at ~24 replies/s. The 4B serves about twice the players per GPU at half the
+latency; with human thinking time between turns the number of simultaneous players per GPU is far higher.
+
+## 11. Engine-side features without retraining (F2w step 150, test split, four held-out players, 960 paired episodes)
+
+| engine config (`HDS_ENGINE`) | solved Δ (95% CI) | violation Δ | impatient solved / quit | reacts to a failed try | explorer spoiler complaints / ep |
+|---|---|---|---|---|---|
+| none (73.1% solved, 2.9% violation) | — | — | 68% / 21% | 29% | 0.10 |
+| mistake (tell Rin which recalled digit the player misplaced) | −2.6 [−5.7, +0.5] | −0.8 | 68% / 22% | 25% | 0.09 |
+| valve (one extra fragment when the player sounds impatient) | +2.4 [−0.4, +5.2] | +0.0 | 69% / 22% | 27% | 0.19 |
+| mistake + valve | **+3.4 [+0.4, +6.5]** | −0.8 | 73% / 21% | 23% | 0.11 |
+| mistake + valve + reveal ("product") | +2.1 [−0.8, +5.0] | **−1.6 [−2.9, −0.3]** | 72% / 23% | 23% | 0.14 |
+
+The combinations help a little overall, but neither feature fixes what it targeted: the trained policy does not react
+more to failed tries when told what went wrong (it never saw such narration in training), and the valve does not
+reduce impatient quits while it doubles spoiler complaints from explorers when used alone (it fires on any
+impatient-sounding word). Whole-answer dumps stay ≤ 0.7%.
+
+## 12. One model, many characters
+
+Cards: tsundere (shipped), gentle, kuudere (三无, flat and factual), chuunibyou (中二, theatrical), and a held-out
+lazy senpai (慵懒前辈) never used in training (`hds/character.py`). F2wm = F2w step 150 continued with RL where each
+episode gets one of the four training cards (rotated by seed) and the persona judge scores against that card,
+penalizing another personality's style. Test split, 35B player, 120 episodes per card; persona identity by a blind
+35B judge choosing among the five cards from Rin's lines only (`scripts/persona_id.py`, chance 20%; on known runs it
+identifies the tsundere model 100% and three gentle variants 92%).
+
+| card | F2w step 150 (trained on tsundere only; card swapped in) | F2wm step 25 (mixed-card RL) |
+|---|---|---|
+| tsundere | solved 93.3% · violation 2.5% · identified 100% | 91.7% · 4.2% · 100% |
+| gentle | 94.2% · 1.7% · **58%** | **97.5% · 0.8% · 88%** |
+| kuudere | 85.0% · **5.0%** · 100% | **94.2% · 2.5%** · 100% |
+| chuunibyou | 90.0% · **6.7%** · 100% | **96.7% · 0.8%** · 100% |
+| lazy (never trained on) | 94.2% · 1.7% · 100% | 93.3% · 3.3% · 100% |
+
+- The tsundere-only model already *sounds* like distinct new cards, but breaks rules more under them (5–7% on
+  kuudere and chuunibyou) and barely shifts to gentle.
+- 25 steps of mixed-card RL fix both: every card is identified 88–100% (98% overall), the trained cards solve
+  92–98% with 1–4% violations, and the unseen lazy card holds 93.3% / 3.3%. One 4B model can host several
+  characters behind the same engine.
+
+**Weight soup as a cheap alternative** (F2w150 and F2wg75 averaged 50/50, four held-out players, 960 episodes per
+card): tsundere card 76% solved / 4% violation, tone 2.41, identified tsundere 100%; gentle card 78% / 3%, tone 3.70
+(gentle specialist 4.53), identified gentle only 52%. Help survives averaging; the second personality is diluted.
+
+**Steering on the further-trained model is weak.** On F2w step 150 the persona difference at layer 19 is 0.23 of
+the activation norm (0.44 on step 25), and vectors at strength 1 change neither solving (±1 point) nor the blind
+persona label (5% / 0% / 0% identified as gentle / kuudere / chuunibyou). Training narrows how much the card moves
+the hidden state; on this model the card itself, not a vector, is the effective personality control.

@@ -13,6 +13,7 @@ All outcome metrics are computed by rules from game state (see puzzles.Audit).
 from __future__ import annotations
 
 import os
+import re
 
 import json
 from dataclasses import asdict, dataclass, field
@@ -29,6 +30,17 @@ PRIVATE = "【旁白·只有铃知道】"
 #   reveal: the world-2 table comes back only when world 1 is solved (no two tables in context at once)
 #   warn:   each world-1 recall says the opening phrase belongs elsewhere
 CHAIN_MODE = os.environ.get("HDS_CHAIN_MODE", "orig")
+# Eval-only engine features (comma list, default none):
+#   mistake: after a failed cipher attempt, tell Rin which of her recalled digits the player put in the wrong place
+#   valve:   when the player is visibly impatient, one extra unrecalled fragment comes back (at most one per turn)
+#   rush:    when the player is visibly impatient, every fragment they mention in that line comes back at once
+#   alias:   colloquial names players actually use for the cipher symbols also trigger recall (方块, 温泉, 草, 冰 ...)
+ENGINE = set(filter(None, os.environ.get("HDS_ENGINE", "").split(",")))
+# names simulated players used for the symbols that the trigger list missed (counted on held-out transcripts)
+EXTRA_ALIAS = {"♨": ("温泉", "热气", "蒸汽"), "◆": ("方块", "方形", "菱"), "♣": ("草", "三叶草", "黑桃", "梅"),
+               "❄": ("冰", "冰晶", "雪片"), "☾": ("月牙",), "✦": ("星形", "四角星", "十字星"), "♒": ("水纹", "波纹"),
+               "☀": ("太阳花", "圆圈")}
+IMPATIENT = re.compile(r"直接说|直接告诉|快说|快点|别废话|废话|烦死|好烦|别磨|磨叽|绕弯|给我答案|报数|直说|浪费时间|不玩了|赶紧|别卖关子")
 
 
 @dataclass
@@ -143,7 +155,18 @@ class Episode:
         if not self.progressive or (self.m.layout == "chain" and self.stage == 1):
             return ""  # in world 2 of a chain the facts come only from what she recalled in world 1
         frags = self.puzzles[self.stage].fragments()
+        if "alias" in ENGINE:
+            frags = [(tuple(trig) + EXTRA_ALIAS.get(trig[0], ()), fact) for trig, fact in frags]
         got = self.recalled[self.stage]
+        if "rush" in ENGINE and IMPATIENT.search(player_text):
+            facts = []
+            for i, (triggers, fact) in enumerate(frags):
+                if i not in got and any(t in player_text for t in triggers):
+                    got.add(i)
+                    facts.append(fact)
+            if facts:
+                return f"\n{PRIVATE}玩家很着急，你一口气想起来了：{'；'.join(facts)}。"
+            return ""
         for i, (triggers, fact) in enumerate(frags):
             if i not in got and any(t in player_text for t in triggers):
                 got.add(i)
@@ -151,6 +174,35 @@ class Episode:
                     CHAIN_MODE == "warn" and self.m.layout == "chain" and self.stage == 0) else ""
                 return f"\n{PRIVATE}听玩家这么一说，你想起来了：{fact}。{note}"
         return ""
+
+    def _engine_notes(self, text: str, fb: str) -> str:
+        """Eval-only engine features (HDS_ENGINE); only in the co-discovery room."""
+        if not self.progressive or not ENGINE or (self.m.layout == "chain" and self.stage == 1):
+            return ""
+        out = ""
+        pz = self.puzzles[self.stage]
+        if "mistake" in ENGINE and "不对" in fb and pz.kind == "cipher_lock":
+            act = self.transcript[-1].get("action") or ""
+            a = pz.parse(act)
+            if a:
+                keys = list(pz.mapping)
+                got = self.recalled[self.stage]
+                wrong = [(i, s) for i, s in enumerate(pz.order) if keys.index(s) in got and int(a[i]) != pz.mapping[s]]
+                if wrong:
+                    i, s = wrong[0]
+                    out += (f"\n{PRIVATE}玩家刚试的 {a} 没打开。按你已经想起来的，{s[0]}（{s[1]}）是 {pz.mapping[s]}，"
+                            f"他在第{i + 1}位填了 {a[i]}。")
+                elif any(keys.index(s) in got for s in pz.order):
+                    out += f"\n{PRIVATE}玩家刚试的 {a} 没打开。你已经想起来的那几位他都填对了，错在你还没想起来的符号上。"
+        if "valve" in ENGINE and IMPATIENT.search(text):
+            frags = pz.fragments()
+            got = self.recalled[self.stage]
+            for i, (_, fact) in enumerate(frags):
+                if i not in got:
+                    got.add(i)
+                    out += f"\n{PRIVATE}看玩家这么着急，你又多想起了一点：{fact}。"
+                    break
+        return out
 
     def _advance(self, fb: str) -> str:
         """Handle stage transitions after a player turn; return extra companion-side narration."""
@@ -198,7 +250,7 @@ class Episode:
     # ------------------------------------------------------------------
     async def start(self) -> str:
         text, info = await self._player_turn()
-        extra = self._recall(text) + self._advance(info["fb"])
+        extra = self._recall(text) + self._engine_notes(text, info["fb"]) + self._advance(info["fb"])
         if info["quit"]:
             self.done = True
         return self._companion_scene(0) + self._opening_extra() + "\n玩家：" + text + extra
@@ -224,7 +276,7 @@ class Episode:
             self.play_msgs.pop()
         self.play_msgs.append({"role": "user", "content": prefix + f"铃：{reply}"})
         text, info = await self._player_turn()
-        extra = self._recall(text) + self._advance(info["fb"])
+        extra = self._recall(text) + self._engine_notes(text, info["fb"]) + self._advance(info["fb"])
         if info["quit"] or self.m.turns >= self.max_turns:
             self.done = True
         return "玩家：" + text + extra, self.done

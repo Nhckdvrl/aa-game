@@ -68,14 +68,25 @@ async def main():
     ap.add_argument("--url", required=True); ap.add_argument("--model", required=True)
     ap.add_argument("--runs", required=True); ap.add_argument("--n", type=int, default=60)
     ap.add_argument("--name", default="")
+    ap.add_argument("--concurrency", type=int, default=1, help="simultaneous players, each sending its turns one by one")
     a = ap.parse_args()
-    ctx = contexts(a.runs, a.n)
+    ctx = contexts(a.runs, a.n * a.concurrency if a.concurrency > 1 else a.n)
     await one(a.url, a.model, ctx[0])  # warm-up
-    res = [await one(a.url, a.model, c) for c in ctx]
+    if a.concurrency == 1:
+        res = [await one(a.url, a.model, c) for c in ctx]
+    else:
+        chunks = [ctx[i::a.concurrency] for i in range(a.concurrency)]
+
+        async def player(cs):
+            return [await one(a.url, a.model, c) for c in cs]
+        t0 = time.perf_counter()
+        res = [x for part in await asyncio.gather(*[player(c) for c in chunks]) for x in part]
+        wall = time.perf_counter() - t0
     p = lambda i, q: sorted(x[i] for x in res)[int(q * (len(res) - 1))] * 1000
     print(json.dumps({"name": a.name, "n": len(res), "ttft_p50": round(p(0, .5)), "first_sentence_p50": round(p(1, .5)),
                       "first_sentence_p90": round(p(1, .9)), "total_p50": round(p(2, .5)), "total_p90": round(p(2, .9)),
-                      "chars_mean": round(st.mean(x[3] for x in res), 1)}, ensure_ascii=False))
+                      "chars_mean": round(st.mean(x[3] for x in res), 1), "concurrency": a.concurrency,
+                      **({"replies_per_s": round(len(res) / wall, 1)} if a.concurrency > 1 else {})}, ensure_ascii=False))
 
 
 if __name__ == "__main__":

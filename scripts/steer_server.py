@@ -33,6 +33,8 @@ ap.add_argument("--topk", type=int, default=4)
 ap.add_argument("--alpha", type=float, default=0.0)
 ap.add_argument("--decode-only", action="store_true",
                 help="steer only newly generated tokens, not the re-encoded conversation (no context contamination)")
+ap.add_argument("--mix", default="",
+                help="mix several persona vectors: path:layer:alpha,path:layer:alpha (residual stream, overrides --mode)")
 ap.add_argument("--max-batch", type=int, default=48)
 ap.add_argument("--name", default="ckpt")
 args = ap.parse_args()
@@ -43,7 +45,23 @@ model = transformers.Qwen3_5ForConditionalGeneration.from_pretrained(args.model,
 layers = model.model.language_model.layers
 STEER = {"desc": "none"}
 
-if args.mode != "none" and args.alpha != 0.0:
+if args.mix:
+    add = {}
+    for item in args.mix.split(","):
+        path, layer, alpha = item.rsplit(":", 2)
+        V = torch.load(path)
+        add[int(layer)] = add.get(int(layer), 0) + float(alpha) * V["resid"][int(layer)]
+    for L, vec in add.items():
+        v_mix = vec.to("cuda", torch.bfloat16)
+
+        def mix_hook(mod, inp, out, v_mix=v_mix):
+            h = out[0] if isinstance(out, tuple) else out
+            if args.decode_only and h.shape[1] != 1:
+                return out
+            return (h + v_mix,) + tuple(out[1:]) if isinstance(out, tuple) else h + v_mix
+        layers[L].register_forward_hook(mix_hook)
+    STEER["desc"] = f"mix {args.mix}"
+elif args.mode != "none" and args.alpha != 0.0:
     V = torch.load(args.vectors)
     if args.mode == "resid":
         v = (args.alpha * V["resid"][args.layer]).to("cuda", torch.bfloat16)

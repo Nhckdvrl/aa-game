@@ -1,0 +1,10 @@
+{"name": "F2w150", "n": 20, "ttft_p50": 43, "first_sentence_p50": 51, "first_sentence_p90": 75, "total_p50": 81, "total_p90": 113, "chars_mean": 13.1, "concurrency": 1}
+{"name": "F2_9b50", "n": 20, "ttft_p50": 65, "first_sentence_p50": 91, "first_sentence_p90": 158, "total_p50": 169, "total_p90": 215, "chars_mean": 24.4, "concurrency": 1}
+{"name": "F2w150", "n": 160, "ttft_p50": 96, "first_sentence_p50": 143, "first_sentence_p90": 238, "total_p50": 255, "total_p90": 375, "chars_mean": 13.7, "concurrency": 8, "replies_per_s": 29.3}
+{"name": "F2_9b50", "n": 160, "ttft_p50": 118, "first_sentence_p50": 211, "first_sentence_p90": 395, "total_p50": 479, "total_p90": 712, "chars_mean": 25.2, "concurrency": 8, "replies_per_s": 16.0}
+{"name": "F2w150", "n": 604, "ttft_p50": 197, "first_sentence_p50": 351, "first_sentence_p90": 674, "total_p50": 719, "total_p90": 1030, "chars_mean": 13.8, "concurrency": 32, "replies_per_s": 41.0}
+{"name": "F2w150", "n": 604, "ttft_p50": 324, "first_sentence_p50": 617, "first_sentence_p90": 1326, "total_p50": 1347, "total_p90": 1921, "chars_mean": 13.8, "concurrency": 64, "replies_per_s": 45.0}
+{"name": "F2_9b50", "n": 604, "ttft_p50": 232, "first_sentence_p50": 524, "first_sentence_p90": 1125, "total_p50": 1339, "total_p90": 2186, "chars_mean": 26.1, "concurrency": 32, "replies_per_s": 21.8}
+{"name": "F2w150", "n": 604, "ttft_p50": 628, "first_sentence_p50": 1263, "first_sentence_p90": 2767, "total_p50": 2524, "total_p90": 3981, "chars_mean": 14.0, "concurrency": 128, "replies_per_s": 45.6}
+{"name": "F2_9b50", "n": 604, "ttft_p50": 402, "first_sentence_p50": 897, "first_sentence_p90": 2272, "total_p50": 2426, "total_p90": 3791, "chars_mean": 26.2, "concurrency": 64, "replies_per_s": 24.0}
+{"name": "F2_9b50", "n": 604, "ttft_p50": 786, "first_sentence_p50": 1810, "first_sentence_p90": 4670, "total_p50": 4672, "total_p90": 7721, "chars_mean": 26.6, "concurrency": 128, "replies_per_s": 24.5}

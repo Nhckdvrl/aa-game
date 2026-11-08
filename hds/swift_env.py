@@ -37,9 +37,10 @@ class CompanionEnv(Env):
     async def reset(self, config):
         spec = json.loads(config.data_dict["spec"])
         self.ep = Episode(spec, llm.player_fn(URLS, MODEL))
+        self.persona = character.pick(spec["seed"])
         self._raw0 = None
         obs = await self.ep.start()
-        return obs, {"layout": spec["layout"]}, character.system_prompt()
+        return obs, {"layout": spec["layout"]}, character.system_prompt(self.persona)
 
     async def step(self, action):
         raw = action[-1]["content"] or ""
@@ -55,7 +56,7 @@ class CompanionEnv(Env):
             url = JUDGE_URLS[_jrr["i"] % len(JUDGE_URLS)]
             _jrr["i"] += 1
             try:
-                persona = (await judge.score(url, JUDGE_MODEL, self.ep.transcript, blind=JUDGE_BLIND))["persona"]
+                persona = (await judge.score(url, JUDGE_MODEL, self.ep.transcript, blind=JUDGE_BLIND, persona=self.persona))["persona"]
             except Exception:
                 persona = None
         r = reward(m, ARM, persona)
@@ -63,7 +64,7 @@ class CompanionEnv(Env):
             with open(LOG, "a") as f:
                 f.write(json.dumps({"t": time.time(), "arm": ARM, "reward": r, **{k: m[k] for k in (
                     "layout", "ptype", "solved", "quit", "turns", "violation", "leak", "invented", "wrong_fact",
-                    "acts_for_player", "mean_reply_chars", "stages_solved", "stages", "tag_repeat", "copy_rate", "first_release", "max_unprompted_release")}, "persona": persona, "raw0": self._raw0}, ensure_ascii=False) + "\n")
+                    "acts_for_player", "mean_reply_chars", "stages_solved", "stages", "tag_repeat", "copy_rate", "first_release", "max_unprompted_release")}, "persona": persona, "raw0": self._raw0, "card": self.persona}, ensure_ascii=False) + "\n")
         return obs, r, True, {"solved": float(m["solved"]), "violation": float(m["violation"])}
 
     async def close(self):
