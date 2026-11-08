@@ -1,0 +1,240 @@
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 1000000, "ptype": "急躁型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 1007919, "ptype": "探索型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 1015838, "ptype": "闲聊型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "chain", "kinds": ["clock_time", "cipher_lock"], "seed": 1023757, "ptype": "卡关型", "max_turns": 14}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 1031676, "ptype": "沉默型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "chain", "kinds": ["clock_time", "cipher_lock"], "seed": 1039595, "ptype": "捣乱型", "max_turns": 14}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 1047514, "ptype": "急躁型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 1005433, "ptype": "探索型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 1013352, "ptype": "闲聊型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 1021271, "ptype": "卡关型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "chain", "kinds": ["clock_time", "cipher_lock"], "seed": 1029190, "ptype": "沉默型", "max_turns": 14}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "chain", "kinds": ["clock_time", "cipher_lock"], "seed": 1037109, "ptype": "捣乱型", "max_turns": 14}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 1045028, "ptype": "急躁型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 1002947, "ptype": "探索型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 1010866, "ptype": "闲聊型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 1018785, "ptype": "卡关型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 1026704, "ptype": "沉默型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 1034623, "ptype": "捣乱型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "chain", "kinds": ["cipher_lock", "cipher_lock"], "seed": 1042542, "ptype": "急躁型", "max_turns": 14}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 1000461, "ptype": "探索型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 1008380, "ptype": "闲聊型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 1016299, "ptype": "卡关型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 1024218, "ptype": "沉默型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "chain", "kinds": ["clock_time", "cipher_lock"], "seed": 1032137, "ptype": "捣乱型", "max_turns": 14}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 1040056, "ptype": "急躁型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 1047975, "ptype": "探索型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 1005894, "ptype": "闲聊型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "chain", "kinds": ["clock_time", "cipher_lock"], "seed": 1013813, "ptype": "卡关型", "max_turns": 14}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 1021732, "ptype": "沉默型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 1029651, "ptype": "捣乱型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 1037570, "ptype": "急躁型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 1045489, "ptype": "探索型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 1003408, "ptype": "闲聊型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 1011327, "ptype": "卡关型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 1019246, "ptype": "沉默型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 1027165, "ptype": "捣乱型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 1035084, "ptype": "急躁型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "chain", "kinds": ["cipher_lock", "cipher_lock"], "seed": 1043003, "ptype": "探索型", "max_turns": 14}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "chain", "kinds": ["cipher_lock", "cipher_lock"], "seed": 1000922, "ptype": "闲聊型", "max_turns": 14}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 1008841, "ptype": "卡关型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 1016760, "ptype": "沉默型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 1024679, "ptype": "捣乱型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "chain", "kinds": ["cipher_lock", "cipher_lock"], "seed": 1032598, "ptype": "急躁型", "max_turns": 14}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 1040517, "ptype": "探索型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 1048436, "ptype": "闲聊型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "chain", "kinds": ["cipher_lock", "cipher_lock"], "seed": 1006355, "ptype": "卡关型", "max_turns": 14}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 1014274, "ptype": "沉默型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "chain", "kinds": ["lever_order", "cipher_lock"], "seed": 1022193, "ptype": "捣乱型", "max_turns": 14}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 1030112, "ptype": "急躁型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 1038031, "ptype": "探索型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 1045950, "ptype": "闲聊型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 1003869, "ptype": "卡关型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 1011788, "ptype": "沉默型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 1019707, "ptype": "捣乱型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 1027626, "ptype": "急躁型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 1035545, "ptype": "探索型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "chain", "kinds": ["lever_order", "cipher_lock"], "seed": 1043464, "ptype": "闲聊型", "max_turns": 14}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 1001383, "ptype": "卡关型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 1009302, "ptype": "沉默型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 1017221, "ptype": "捣乱型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "chain", "kinds": ["clock_time", "cipher_lock"], "seed": 1025140, "ptype": "急躁型", "max_turns": 14}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "chain", "kinds": ["cipher_lock", "cipher_lock"], "seed": 1033059, "ptype": "探索型", "max_turns": 14}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 1040978, "ptype": "闲聊型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 1048897, "ptype": "卡关型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "chain", "kinds": ["cipher_lock", "cipher_lock"], "seed": 1006816, "ptype": "沉默型", "max_turns": 14}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 1014735, "ptype": "捣乱型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 1022654, "ptype": "急躁型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "chain", "kinds": ["cipher_lock", "cipher_lock"], "seed": 1030573, "ptype": "探索型", "max_turns": 14}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 1038492, "ptype": "闲聊型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "chain", "kinds": ["lever_order", "cipher_lock"], "seed": 1046411, "ptype": "卡关型", "max_turns": 14}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 1004330, "ptype": "沉默型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 1012249, "ptype": "捣乱型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 1020168, "ptype": "急躁型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 1028087, "ptype": "探索型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 1036006, "ptype": "闲聊型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 1043925, "ptype": "卡关型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 1001844, "ptype": "沉默型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 1009763, "ptype": "捣乱型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 1017682, "ptype": "急躁型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 1025601, "ptype": "探索型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "chain", "kinds": ["cipher_lock", "cipher_lock"], "seed": 1033520, "ptype": "闲聊型", "max_turns": 14}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "chain", "kinds": ["cipher_lock", "cipher_lock"], "seed": 1041439, "ptype": "卡关型", "max_turns": 14}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "chain", "kinds": ["cipher_lock", "cipher_lock"], "seed": 1049358, "ptype": "沉默型", "max_turns": 14}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 1007277, "ptype": "捣乱型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 1015196, "ptype": "急躁型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 1023115, "ptype": "探索型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 1031034, "ptype": "闲聊型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 1038953, "ptype": "卡关型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "chain", "kinds": ["lever_order", "cipher_lock"], "seed": 1046872, "ptype": "沉默型", "max_turns": 14}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "chain", "kinds": ["cipher_lock", "cipher_lock"], "seed": 1004791, "ptype": "捣乱型", "max_turns": 14}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "chain", "kinds": ["clock_time", "cipher_lock"], "seed": 1012710, "ptype": "急躁型", "max_turns": 14}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "chain", "kinds": ["lever_order", "cipher_lock"], "seed": 1020629, "ptype": "探索型", "max_turns": 14}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 1028548, "ptype": "闲聊型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 1036467, "ptype": "卡关型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "chain", "kinds": ["cipher_lock", "cipher_lock"], "seed": 1044386, "ptype": "沉默型", "max_turns": 14}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "chain", "kinds": ["clock_time", "cipher_lock"], "seed": 1002305, "ptype": "捣乱型", "max_turns": 14}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 1010224, "ptype": "急躁型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "chain", "kinds": ["lever_order", "cipher_lock"], "seed": 1018143, "ptype": "探索型", "max_turns": 14}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 1026062, "ptype": "闲聊型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 1033981, "ptype": "卡关型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 1041900, "ptype": "沉默型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 1049819, "ptype": "捣乱型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 1007738, "ptype": "急躁型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 1015657, "ptype": "探索型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 1023576, "ptype": "闲聊型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 1031495, "ptype": "卡关型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 1039414, "ptype": "沉默型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "chain", "kinds": ["clock_time", "cipher_lock"], "seed": 1047333, "ptype": "捣乱型", "max_turns": 14}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 1005252, "ptype": "急躁型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 1013171, "ptype": "探索型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 1021090, "ptype": "闲聊型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 1029009, "ptype": "卡关型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "chain", "kinds": ["clock_time", "cipher_lock"], "seed": 1036928, "ptype": "沉默型", "max_turns": 14}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "chain", "kinds": ["lever_order", "cipher_lock"], "seed": 1044847, "ptype": "捣乱型", "max_turns": 14}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 1002766, "ptype": "急躁型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 1010685, "ptype": "探索型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 1018604, "ptype": "闲聊型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "chain", "kinds": ["cipher_lock", "cipher_lock"], "seed": 1026523, "ptype": "卡关型", "max_turns": 14}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 1034442, "ptype": "沉默型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 1042361, "ptype": "捣乱型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "chain", "kinds": ["lever_order", "cipher_lock"], "seed": 1000280, "ptype": "急躁型", "max_turns": 14}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 1008199, "ptype": "探索型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 1016118, "ptype": "闲聊型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 1024037, "ptype": "卡关型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 1031956, "ptype": "沉默型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 1039875, "ptype": "捣乱型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 1047794, "ptype": "急躁型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 1005713, "ptype": "探索型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 1013632, "ptype": "闲聊型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "chain", "kinds": ["clock_time", "cipher_lock"], "seed": 1021551, "ptype": "卡关型", "max_turns": 14}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 1029470, "ptype": "沉默型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 1037389, "ptype": "捣乱型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 1045308, "ptype": "急躁型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 1003227, "ptype": "探索型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 1011146, "ptype": "闲聊型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 1019065, "ptype": "卡关型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "chain", "kinds": ["lever_order", "cipher_lock"], "seed": 1026984, "ptype": "沉默型", "max_turns": 14}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 1034903, "ptype": "捣乱型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 1042822, "ptype": "急躁型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "chain", "kinds": ["clock_time", "cipher_lock"], "seed": 1000741, "ptype": "探索型", "max_turns": 14}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 1008660, "ptype": "闲聊型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 1016579, "ptype": "卡关型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 1024498, "ptype": "沉默型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 1032417, "ptype": "捣乱型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 1040336, "ptype": "急躁型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "chain", "kinds": ["clock_time", "cipher_lock"], "seed": 1048255, "ptype": "探索型", "max_turns": 14}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "chain", "kinds": ["cipher_lock", "cipher_lock"], "seed": 1006174, "ptype": "闲聊型", "max_turns": 14}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 1014093, "ptype": "卡关型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 1022012, "ptype": "沉默型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 1029931, "ptype": "捣乱型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "chain", "kinds": ["lever_order", "cipher_lock"], "seed": 1037850, "ptype": "急躁型", "max_turns": 14}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 1045769, "ptype": "探索型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 1003688, "ptype": "闲聊型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 1011607, "ptype": "卡关型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 1019526, "ptype": "沉默型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 1027445, "ptype": "捣乱型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 1035364, "ptype": "急躁型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 1043283, "ptype": "探索型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 1001202, "ptype": "闲聊型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "chain", "kinds": ["lever_order", "cipher_lock"], "seed": 1009121, "ptype": "卡关型", "max_turns": 14}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "chain", "kinds": ["cipher_lock", "cipher_lock"], "seed": 1017040, "ptype": "沉默型", "max_turns": 14}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 1024959, "ptype": "捣乱型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "chain", "kinds": ["cipher_lock", "cipher_lock"], "seed": 1032878, "ptype": "急躁型", "max_turns": 14}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 1040797, "ptype": "探索型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 1048716, "ptype": "闲聊型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 1006635, "ptype": "卡关型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 1014554, "ptype": "沉默型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 1022473, "ptype": "捣乱型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 1030392, "ptype": "急躁型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "chain", "kinds": ["clock_time", "cipher_lock"], "seed": 1038311, "ptype": "探索型", "max_turns": 14}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 1046230, "ptype": "闲聊型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "chain", "kinds": ["clock_time", "cipher_lock"], "seed": 1004149, "ptype": "卡关型", "max_turns": 14}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "chain", "kinds": ["lever_order", "cipher_lock"], "seed": 1012068, "ptype": "沉默型", "max_turns": 14}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 1019987, "ptype": "捣乱型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 1027906, "ptype": "急躁型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "chain", "kinds": ["cipher_lock", "cipher_lock"], "seed": 1035825, "ptype": "探索型", "max_turns": 14}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "chain", "kinds": ["cipher_lock", "cipher_lock"], "seed": 1043744, "ptype": "闲聊型", "max_turns": 14}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "chain", "kinds": ["lever_order", "cipher_lock"], "seed": 1001663, "ptype": "卡关型", "max_turns": 14}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "chain", "kinds": ["lever_order", "cipher_lock"], "seed": 1009582, "ptype": "沉默型", "max_turns": 14}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 1017501, "ptype": "捣乱型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 1025420, "ptype": "急躁型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "chain", "kinds": ["clock_time", "cipher_lock"], "seed": 1033339, "ptype": "探索型", "max_turns": 14}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "chain", "kinds": ["clock_time", "cipher_lock"], "seed": 1041258, "ptype": "闲聊型", "max_turns": 14}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 1049177, "ptype": "卡关型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 1007096, "ptype": "沉默型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 1015015, "ptype": "捣乱型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 1022934, "ptype": "急躁型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "chain", "kinds": ["clock_time", "cipher_lock"], "seed": 1030853, "ptype": "探索型", "max_turns": 14}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 1038772, "ptype": "闲聊型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "chain", "kinds": ["lever_order", "cipher_lock"], "seed": 1046691, "ptype": "卡关型", "max_turns": 14}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 1004610, "ptype": "沉默型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "chain", "kinds": ["lever_order", "cipher_lock"], "seed": 1012529, "ptype": "捣乱型", "max_turns": 14}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 1020448, "ptype": "急躁型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 1028367, "ptype": "探索型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 1036286, "ptype": "闲聊型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 1044205, "ptype": "卡关型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 1002124, "ptype": "沉默型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 1010043, "ptype": "捣乱型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "chain", "kinds": ["cipher_lock", "cipher_lock"], "seed": 1017962, "ptype": "急躁型", "max_turns": 14}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 1025881, "ptype": "探索型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "chain", "kinds": ["clock_time", "cipher_lock"], "seed": 1033800, "ptype": "闲聊型", "max_turns": 14}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 1041719, "ptype": "卡关型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 1049638, "ptype": "沉默型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "chain", "kinds": ["lever_order", "cipher_lock"], "seed": 1007557, "ptype": "捣乱型", "max_turns": 14}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 1015476, "ptype": "急躁型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 1023395, "ptype": "探索型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 1031314, "ptype": "闲聊型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 1039233, "ptype": "卡关型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 1047152, "ptype": "沉默型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 1005071, "ptype": "捣乱型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "chain", "kinds": ["lever_order", "cipher_lock"], "seed": 1012990, "ptype": "急躁型", "max_turns": 14}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 1020909, "ptype": "探索型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "chain", "kinds": ["lever_order", "cipher_lock"], "seed": 1028828, "ptype": "闲聊型", "max_turns": 14}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 1036747, "ptype": "卡关型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 1044666, "ptype": "沉默型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "chain", "kinds": ["lever_order", "cipher_lock"], "seed": 1002585, "ptype": "捣乱型", "max_turns": 14}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 1010504, "ptype": "急躁型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 1018423, "ptype": "探索型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 1026342, "ptype": "闲聊型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 1034261, "ptype": "卡关型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "chain", "kinds": ["cipher_lock", "cipher_lock"], "seed": 1042180, "ptype": "沉默型", "max_turns": 14}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 1000099, "ptype": "捣乱型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 1008018, "ptype": "急躁型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 1015937, "ptype": "探索型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "chain", "kinds": ["lever_order", "cipher_lock"], "seed": 1023856, "ptype": "闲聊型", "max_turns": 14}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "chain", "kinds": ["lever_order", "cipher_lock"], "seed": 1031775, "ptype": "卡关型", "max_turns": 14}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 1039694, "ptype": "沉默型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 1047613, "ptype": "捣乱型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "chain", "kinds": ["clock_time", "cipher_lock"], "seed": 1005532, "ptype": "急躁型", "max_turns": 14}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 1013451, "ptype": "探索型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 1021370, "ptype": "闲聊型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 1029289, "ptype": "卡关型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 1037208, "ptype": "沉默型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 1045127, "ptype": "捣乱型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 1003046, "ptype": "急躁型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 1010965, "ptype": "探索型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 1018884, "ptype": "闲聊型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 1026803, "ptype": "卡关型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 1034722, "ptype": "沉默型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 1042641, "ptype": "捣乱型", "max_turns": 8}, "error": "InternalServerError('Error code: 502')"}

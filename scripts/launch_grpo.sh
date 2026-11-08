@@ -8,6 +8,8 @@ mkdir -p $OUT
 NPROC=$(echo $GPUS | tr ',' '\n' | wc -l)
 PDBS=${PDBS:-4}; GA=${GA:-8}; EXTRA=${EXTRA:-}   # 9B: PDBS=2 GA=16 keeps 128 samples per step
 [ -n "${SCALE_REWARDS:-}" ] && EXTRA="$EXTRA --scale_rewards $SCALE_REWARDS"   # e.g. none = Dr. GRPO
+# flash-linear-attention kernels for Qwen3.5's gated delta rule (2x faster fwd+bwd than the torch fallback)
+[ -d /data1/xiangding/fla_pkgs ] && export PYTHONPATH=/data1/xiangding/fla_pkgs${PYTHONPATH:+:$PYTHONPATH}
 DATA=$ROOT/train/train.jsonl; MAXLEN=12288; MAXTURNS=16
 # v2 episodes need more turns (one memory fragment per turn, only when the player brings it up)
 [ "$MEMORY" = progressive ] && { DATA=$ROOT/train/train_v2.jsonl; MAXLEN=16384; MAXTURNS=24; }
