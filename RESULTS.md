@@ -252,6 +252,14 @@ Share of the answer's entropy released in the companion's first reply (`hds/info
 | C2w step 50 (no persona term) | 85.8 / 9.6 | 77.9 / 7.5 | 81.7 / 10.0 | 32.5 / 10.8 | 86.7 / 12.5 |
 | F2 step 50 (from scratch) | 73.3 / 10.0 | 65.0 / 13.8 | 67.5 / 12.5 | 32.5 / 12.1 | 65.0 / 15.0 |
 | F2 9B step 50 (from scratch) | 63.8 / 9.6 | 56.7 / 8.8 | 64.2 / 7.9 | 24.6 / 6.2 | 60.8 / 13.3 |
+| base 9B | 47.9 / 65.8 | 39.2 / 68.3 | 42.9 / 60.0 | 20.8 / 59.6 | 50.8 / 73.3 |
+| F2w step 100 | 86.7 / 5.0 | 81.2 / 5.0 | 78.3 / 4.6 | 33.3 / 5.0 | 81.7 / 10.8 |
+| F2 step 100 (from scratch) | 89.2 / 3.8 | 85.4 / 5.8 | 77.5 / 10.0 | 37.9 / 10.8 | 83.3 / 8.3 |
+| **F2w step 150 (selected)** | **91.7 / 2.5** | **86.7 / 3.3** | **81.7 / 2.9** | **32.5 / 2.9** | **91.7 / 3.3** |
+
+  The selected checkpoint keeps violations at 2.5–3.3% on every held-out player, the answer-fishing one
+  included (base 4B: 67–82%). From scratch catches up with the warm start by step 100; the warm start's
+  advantage is skipping the examiner phase early, not a higher ceiling.
 
 - **The remaining violations in the co-discovery room are cross-world memory mix-ups.** Two-world episodes
   where both worlds are cipher locks are 9% of the test set; in them 96% (E75), 82% (F2w75), 82% (C2w50),
@@ -316,6 +324,16 @@ the best v2 checkpoint (F2w step 25), no training involved.
   4.30 / 62% (Δ −4.4 [−7.8, −0.9]); dial +1.5 4.70 / 53%; dial −1 1.93 / 63%. The val advantage of steering
   (−1 vs −9 points) was noise at n=96. What the dial adds is continuous control in both directions from one
   vector (including a sharper Rin no card was written for), not a lower cost.
+- **Retraining for the new persona beats both on val** (F2wg: F reward with the gentle card, warm from F2w
+  step 25, judge rubric following the card): step 25 / 50 / 75 tone 4.57 / 4.29 / 4.47, solved 76 / 91 / 91%,
+  violation 2 / 1 / 1% — vs dial +1 4.11 / 85%, dial +1.5 4.67 / 81%, gentle card 4.07 / 77%. About 50 RL steps
+  (~1.5 h on 4 H20) buy the new personality without the solving cost. **Confirmed on held-out players** (960
+  episodes, four players; tone on the pooled replies): F2wg step 75 tone 4.54, solved 74%, violation 3% — the
+  same help as training further with the tsundere card (F2w step 150: tone 2.01, 73%, 3%), while steering or
+  the gentle card on the shared step-25 start reach tone 4.1–4.3 at 62–63% solved and 10–11% violations.
+  Per player (solved / violation): 35B 91.7 / 1.2, real-length 85.8 / 2.5, WildChat-voiced 84.6 / 3.8,
+  GLM-9B 32.5 / 2.5, answer-fishing 90.0 / 5.0. The dial is for live, continuous adjustment; a lasting new
+  personality is worth an RL run.
 
 ## 8. Known caveats
 
