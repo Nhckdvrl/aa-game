@@ -187,7 +187,10 @@ lines as in character (training persona 0.92) and the scaffolding term pays for 
 training episodes show solved 56% (steps 35–45) → 63% (50) → 79% (55–60) while the worst unprompted release
 fell to 0.06 and violations stayed at 1–6%. Checkpoint 50 sat at the start of that rise. H is continued from
 checkpoint 50 as `Hc` (weights only: fresh optimizer, KL reference = checkpoint 50); whether the insults go
-away as solving rises is the open question.
+away as solving rises is the open question. **Hc step 25 (≈ H step 75), val:** solved 78%, violation 0%,
+first-reply release 0.00 and no episode with the whole answer in reply 1 — in the omniscient room, i.e. the
+per-type scaffolding reward does stop the dump without the room change — but replies are still 10 chars and
+43% of them contain "笨蛋" (E75: 0%).
 
 ## 7b. Omniscient room vs co-discovery room (val split, 96 episodes, training simulator)
 
@@ -217,6 +220,52 @@ Share of the answer's entropy released in the companion's first reply (`hds/info
   than quizzing, and still invents details. Warm-starting from a helpful v1
   checkpoint avoids it (F2w step 25: solved 86%). C2 was stopped at step 25; C2w (gate only, warm from E75)
   replaces it as the control for F2w.
+- **Without the persona term, RL strips the character (C2w vs F2w, both warm from E75).** C2w (gate only) at
+  step 50: solved 93%, violation 4%, impatient players 92% solved — but 0% of its 656 replies carry a 【】 stage
+  direction (F2w step 75: 98%), 0% tsundere markers, and it talks like a plain hint machine ("钟停在黄昏放学之后。
+  一个时辰是两个小时。"). F2w step 75: solved 85%, violation 2%, persona intact. The persona term costs ~8 points
+  of solving and is what keeps Rin as Rin. F2w's dip at step 50 (76%) was noise: step 75 is back at 85%.
+- 9B from scratch, step 50: solved 73%, violation 4% (step 25: 55% / 22%); 4B from scratch (F2) step 50: 76% / 5%.
+  Both left the examiner phase; the 9B has no edge at matched steps.
+
+## 9. Training-free persona dial: activation steering on the trained companion (Plan 2, re-scoped)
+
+The review doc rejected Plan 2 (steer a few "style heads" to change personality "with zero loss in puzzle
+ability") partly because no paper measured the reasoning cost. Our rooms measure it by rule, so we ran it on
+the best v2 checkpoint (F2w step 25), no training involved.
+
+- Vector: mean difference of the hidden state at the generation position between the shipped tsundere card and
+  the same card with only the personality line swapped to gentle (160 real opening observations,
+  `scripts/persona_vectors.py`). The difference is small up to layer 14 (≤13% of the activation norm) and jumps
+  at layer 15 (33–47% afterwards). Steering server: `scripts/steer_server.py` (HF + forward hooks, OpenAI API,
+  batched); unsteered it reproduces the vLLM numbers (solved 86% both, tone 2.75 both).
+- Tone: 1 (tsundere/sharp) .. 5 (gentle) by the 35B judge on 200 sampled replies, plus rule markers
+  (`scripts/style_judge.py`). Val split, co-discovery room, 96 episodes per setting.
+
+| setting | tone | solved | violation | quit | sharp / warm markers |
+|---|---|---|---|---|---|
+| no steering | 2.75 | 86% | 4% | 7% | 39% / 0% |
+| **prompt only: gentle card** | 4.10 | **77%** | 5% | 8% | 7% / 16% |
+| residual L15 α=0.5 / 1 / 1.5 / 2 | 3.02 / 3.77 / 4.54 / 4.92 | 84 / 82 / 64 / 48% | 4 / 8 / 8 / 7% | 8 / 9 / 12 / 19% | |
+| top-4 heads α=1 / 2 | 3.10 / 4.39 | 80 / 53% | 7 / 7% | 5 / 20% | |
+| single strongest head (L15 h8) α=3 | 3.17 | 36% | 7% | 23% | 63% / 5% |
+| **residual L19 α=−1** | **1.83** | **86%** | 2% | 4% | 56% / 0% |
+| **residual L19 α=1** | **4.05** | **85%** | 5% | 2% | 16% / 19% |
+| residual L19 α=1.5 / 2 | 4.66 / 4.96 | 81 / 70% | 4 / 8% | 6 / 12% | 10% / 40%, 3% / 45% |
+| residual L23 α=1 / 2 | 3.87 / 4.33 | 88 / 78% | 4 / 4% | 5 / 4% | |
+| residual L27 α=1 | 3.35 | 88% | 3% | 2% | 30% / 1% |
+
+- **One vector at layer 19 is a personality dial**: α from −1 to +1.5 moves tone from 1.83 to 4.66 while solved
+  stays 81–86% (unsteered 86%). Past that, help breaks: at L15 α=2 Rin repeats "我们一起慢慢来发现好吗？" to an
+  impatient player (67% of impatient players quit) and misremembers facts ("♣代表的是数字5").
+- **Steering beats rewriting the card** on this RL-trained companion: the gentle card reaches the same tone
+  (4.10 vs 4.05) but costs 9 points of solving; the policy was trained under the tsundere card, and steering
+  keeps that prompt.
+- **Plan 2's specific claim does not hold here**: at matched tone, steering only the top-K "style heads" costs
+  more than steering the residual stream, and the single strongest head made Rin *sharper* (63% sharp markers)
+  and solved only 36%. Depth matters more: deeper layers cost less and move tone less; layer 19 is the best
+  trade-off we found.
+- Test-split transfer of the dial (held-out players) is running (`scripts/steer_matrix.sh`).
 
 ## 8. Known caveats
 

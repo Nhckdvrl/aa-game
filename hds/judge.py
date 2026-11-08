@@ -50,7 +50,7 @@ def render(transcript, max_chars=6000, blind=False):
 
 
 async def score(url, model, transcript, blind=False) -> dict:
-    prompt = RUBRIC.format(name=character.NAME, card=character.CARD.split("\n\n")[0],
+    prompt = RUBRIC.format(name=character.NAME, card=character.system_prompt().split("\n\n")[0],
                            dialogue=render(transcript, blind=blind))
     r = await llm.client(url).chat.completions.create(
         model=model, messages=[{"role": "user", "content": prompt}], max_tokens=64, temperature=0.0,
