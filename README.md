@@ -17,9 +17,10 @@ violations fall to 0–1%, and one 4B checkpoint hosts five characters (blind id
 
 **Branch (after Goodfire, 2026): monitoring and shaping through internals.** A linear probe reads the coming
 "give away the whole answer" decision before the first token (AUROC 0.98–0.99) and transfers to later checkpoints.
-Used as a training penalty on the policy's activations it first makes a withholder; then the policy turns the fixed
-direction off within 15 steps, the hack returns, and the probe it was shaped against goes blind while a refit
-probe still sees the decision — a small, concrete case of the obfuscation risk (REPORT §14, RESULTS §15).
+Used as a training penalty on the policy's activations against a fixed direction, it first makes a withholder; then
+the policy shifts its activations below the threshold, the hack returns, and the probe goes blind — a small, concrete
+case of the obfuscation risk. Refitting the probe every 25 steps and shaping against the newest one holds: a third of
+the dumping at the same solve rate, with a monitor that still reads the rest (AUROC 0.96) (REPORT §14, RESULTS §15).
 
 Report: [REPORT.md](REPORT.md) · all numbers: [RESULTS.md](RESULTS.md) · project page:
 https://claude.ai/artifact/T1jUVCKou5VJtyx2ZnGT7D · working notes (Chinese): [docs/project_status_zh.md](docs/project_status_zh.md)

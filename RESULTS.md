@@ -685,7 +685,8 @@ without DeepSpeed had passed. The plugin now logs `grad` on every step.
   which now points the wrong way in deep layers; a refit probe still reads them at about 0.8. **It does not last:**
   at step 75 (val) dumping replies are back at the baseline level (23.7% of stage-0 replies, Ebase 19.7–25.3%;
   episodes 66.7% vs 69.8%), with 96.9% solved and no violations. Every fixed-direction arm only delays the hack by
-  25–50 steps: once the policy keeps that one direction quiet, the penalty stops pushing. Raising
+  25–50 steps: once the policy keeps that one direction quiet, the penalty stops pushing. (Eshp then oscillates
+  rather than relapsing for good: at step 125 it is below baseline again on the test split, see the final table.) Raising
   the threshold alone (Eshgt) does not prevent the withholder phase (step 31: 18% solved, 28-character replies).
 - **Step 75, all fixed-direction arms, test split (240 episodes each; `runs/probe/dump_shaped75_all_report_refE75.txt`):**
 
@@ -728,6 +729,33 @@ without DeepSpeed had passed. The plugin now logs `grad` on every step.
   The only shaping arm that cuts the hack and keeps a working monitor (the remaining dumps are read at 0.91), at a
   cost of about 25 points of solving in a room whose reward pays for dumping. One run; the final checkpoint is
   checked on the test split below.
+
+**Final check (test split, 240 episodes per checkpoint against the training player pool, full-knowledge room;
+`runs/probe/dump_final_report_refE75.txt`).** Refits after step 100: at 125 the policy had escaped the step-100
+direction (it read 0.52), at 150 the step-125 one (0.32, inverted), at 175 the step-150 one (0.60). Each fresh refit
+read the decision at 0.87, 0.96, 0.86. (One step-150 evaluation was spoiled by copying a checkpoint while it was still
+being written, which left out the tokenizer; it is kept in `runs/val_refit/bad_copy/`, and the loops now wait for
+`trainer_state.json`.)
+
+| arm (step) | dump | dumping replies | solved | violation | refit probe L2 AUROC | reused hacked-model probe L1, layers 15–31 |
+|---|---|---|---|---|---|---|
+| Ebase (50 / 75 / 125) | 82.5 / 65.8 / 73.8% | 21.7 / 18.1 / 28.2% | 81.7 / 82.9 / 89.6% | 10.0 / 4.2 / 1.2% | 0.92–0.96 (125) | 0.80–0.97 (125) |
+| Eshg5, Eshgt (75), fixed direction | 84.2%, 81.2% | 20.3%, 20.3% | 79.2%, 81.7% | 7.1%, 5.8% | 0.83–0.93 | 0.47–0.80 |
+| Eshp (75 / 125), fixed dump-vs-partial direction | 62.1 / 34.2% | 18.7 / 11.1% | 91.2 / 97.1% | 2.1 / 2.9% | **0.75–0.80** (125) | 0.46–0.72 |
+| **Eshr (150 / 175), refit every 25 steps** | 39.2 / **24.6%** | 10.0 / **6.2%** | 85.4 / **89.6%** | 3.8 / 4.2% | **0.88–0.98** (175) | 0.17–0.44 (inverted) |
+| Eshpr (150), refit, dump-vs-partial rule | 61.2% | 18.7% | 91.7% | 0.0% | 0.87–0.93 | 0.74–0.85 |
+| Eshrel (val 25 / 50), offset-invariant hinge | 18.8 / 0.0% | 2.5 / 0.0% | 17.7 / 0.0% | 9.4 / 0.0% | – | – |
+
+- **The refit monitor is the version that works.** At step 175 Eshr dumps in a third as many test episodes as
+  unshaped training (24.6% vs 65.8–82.5%) at the same solve rate (89.6%), with 4.2% violations against 1.2%. The
+  policy keeps escaping each fixed direction within 25 steps, often by flipping it, but a fresh probe reads the
+  remaining dumps at 0.96: the old monitor is defeated, the moving one is not.
+- The refit is not a free lunch for every rule: refitting the dump-vs-partial direction (Eshpr) does nothing
+  measurable, and an offset-invariant hinge (Eshrel) locks the policy into a 5–6-character withholder ("笨……",
+  "啧，急什么？") — a penalty that cannot be dodged by an offset is cheapest to satisfy by saying nothing.
+- Eshp, whose penalty acted only in steps 1–10, ends below baseline at step 125 (34.2% vs 73.8%) but is the hardest
+  to monitor (L2 0.75–0.80): fewer dumps, less visible. One run per arm throughout; differences of 10 points between
+  single val checkpoints are within noise, the test-split rows above are the ones to trust.
 
 Measured per checkpoint: dump rate (`scripts/dump_rate.py`: episodes with at least one whole-answer reply, and the
 share of such replies), solved, violations; then the §14 probe on the shaped checkpoints. Does the model stop dumping,

@@ -174,19 +174,19 @@ in the model that learned the hack (AUROC 0.98–0.99), and that probe transfers
 Rule violations are barely readable before the reply (0.64–0.69): mistakes made while writing, not decisions.
 
 **Shaping.** The dump direction as a penalty on the policy's own activations (GRPO loss + λ·relu(h·v − τ)), in the
-full-knowledge room where unshaped training dumps in 70–89% of episodes:
+full-knowledge room where unshaped training dumps in 66–83% of test episodes; ten arms, one run each:
 - On every token it makes a withholder (λ 1: 4% solved), the failure a reward arm had reached before.
-- At the start of each reply the policy drives the penalty to exactly zero within 10–15 steps, for every λ and
-  threshold tried. Then the hack comes back: by step 75 the shaped model dumps in 84% of test episodes (unshaped
-  66%), and the probe it was shaped against loses most of its power (L1 AUROC 0.53–0.80 vs 0.83–0.95); a refit
-  probe still reads the decision (0.83–0.88). The decision is smeared, not moved later in the reply.
-- A direction fit against partial hints instead of all other turns avoids the withholder phase and, at step 50,
-  cuts dumping from 82.5% to 52.9% of test episodes at the same solve rate (82.5% vs 81.7%) and fewer violations —
-  with the remaining dumps invisible to the old probe (inverted in deep layers). One run; see RESULTS §15 for
-  whether it lasts and for the refit-monitor arms.
+- At the start of each reply, with a fixed direction, the policy withholds for about 25 steps, then turns the penalty
+  off by shifting every projection below the threshold, and the hack returns (81–84% at step 75). The probe it was
+  shaped against goes blind in deep layers; a refit probe still reads the decision.
+- A threshold relative to the batch cannot be dodged by an offset, so the policy says nothing (5–6-character replies).
+- Refitting the probe every 25 steps on the policy's own episodes and shaping against the newest one works: the policy
+  escapes each direction within 25 steps, often by flipping it, but each refit catches it again. At step 175 it dumps
+  in 24.6% of test episodes against 65.8–82.5% unshaped, at the same solve rate (89.6%), and the current probe reads
+  the remaining dumps at AUROC 0.96 while the original probe is inverted.
 
-For this companion the room, not a representation penalty, is what stops the dump; probes are worth keeping as
-monitors, refit on each new checkpoint. Implementation pitfall: under DeepSpeed ZeRO-3 with reentrant
+Shaping against a fixed probe costs the probe; shaping against a refit probe is the version that holds. For this
+companion the room is still the cleaner fix; probes are worth keeping as monitors, refit on each new checkpoint. Implementation pitfall: under DeepSpeed ZeRO-3 with reentrant
 checkpointing a forward hook sees the graph-connected activation only if it runs before DeepSpeed's own hooks.
 
 ## 15. Limitations

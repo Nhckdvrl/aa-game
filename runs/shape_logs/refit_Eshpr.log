@@ -44,3 +44,10 @@ layer 19: dump 199 partial 48 other 435 (n=682)
 [06:11] step 125: val episodes
 闲聊型                            60    91.7%     1.7%     0.0%     0.0%     1.7%     0.0%     0.0%    3.8     26   1.12
 [06:13] step 125: hidden states
+contexts 763 positive share 0.211
+wrote /data2/xiangding/companion/runs/probe/dump_Eshpr_125.npz (763, 8, 2560)
+layer 19: dump 161 partial 108 other 494 (n=763)
+  projection mean  dump -0.93  partial -2.34 (sd 1.46)  no-info -3.53
+  held-out AUROC  dump vs partial 0.779  dump vs no-info 0.952
+  tau = partial mean + 1 sd = -0.88 -> runs/probe/refit_Eshpr_125.pt
+[06:14] step 125: direction swapped in

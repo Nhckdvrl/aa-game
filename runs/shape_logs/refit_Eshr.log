@@ -52,3 +52,21 @@ contexts 1891 positive share 0.0
 wrote /data2/xiangding/companion/runs/probe/dump_Eshr_150.npz (1891, 8, 2560)
 too few examples to fit (dump 0, other 1891); nothing written
 [06:09] step 150: kept the previous direction
+[06:14] step 150: val episodes
+闲聊型                            60    83.3%     1.7%     0.0%     0.0%     1.7%     0.0%     0.0%    4.4     26   1.02
+[06:15] step 150: hidden states
+contexts 898 positive share 0.114
+wrote /data2/xiangding/companion/runs/probe/dump_Eshr_150.npz (898, 8, 2560)
+runs/probe/dump_Eshr_150.npz: n=898 dumps=102 new direction held-out AUROC 0.957 tau 0.11 | previous direction AUROC 0.318, cosine 0.09
+[06:17] step 150: direction swapped in
+[06:22] step 175: val episodes
+闲聊型                            60    88.3%     1.7%     0.0%     0.0%     1.7%     0.0%     0.0%    4.2     21   1.08
+[06:24] step 175: hidden states
+contexts 877 positive share 0.064
+wrote /data2/xiangding/companion/runs/probe/dump_Eshr_175.npz (877, 8, 2560)
+runs/probe/dump_Eshr_175.npz: n=877 dumps=56 new direction held-out AUROC 0.859 tau -0.50 | previous direction AUROC 0.596, cosine 0.05
+[06:25] step 175: direction swapped in
+kex_exchange_identification: Connection closed by remote host
+Connection closed by 172.31.3.226 port 22
+kex_exchange_identification: Connection closed by remote host
+Connection closed by 172.31.3.226 port 22
