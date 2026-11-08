@@ -60,6 +60,8 @@ def main():
         f[i] = frac[key][k]
     assert np.array_equal((f >= 0.99).astype(int), y), "release fractions do not line up with stored dump labels"
     dump, part = f >= 0.99, (f >= PART_LO) & (f < PART_HI)
+    if dump.sum() < 10 or part.sum() < 10:
+        sys.exit(f"too few examples to fit (dump {dump.sum()}, partial {part.sum()}); nothing written")
     tr = np.array([(zlib.crc32(str(x).encode()) % 1000) < 700 for x in g])
     v = H[dump & tr].mean(0) - H[part & tr].mean(0)
     v = v / np.linalg.norm(v)

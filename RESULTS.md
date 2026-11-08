@@ -612,6 +612,68 @@ DeepSpeed's own module hooks (`prepend=True`): those run inside the checkpoint u
 detached copy. The first two shaping runs trained 26 steps with a penalty that had no gradient; a standalone test
 without DeepSpeed had passed. The plugin now logs `grad` on every step.
 
+**First round (val split, 96 episodes, training simulator; "dump" = episodes with at least one whole-answer reply):**
+
+| arm | step | dump | solved | violation |
+|---|---|---|---|---|
+| Ebase (no penalty) | 25 / 50 | 61.5% / 88.5% | 64.6% / 68.8% | 14.6% / 4.2% |
+| Esh1 (every token, λ 0.1) | 25 / 50 | 68.8% / 78.1% | 59.4% / 76.0% | 8.3% / 4.2% |
+| Esh10 (every token, λ 1) | 25 | 5.2% | **4.2%** | 3.1% |
+| Eshg (reply start, λ 1) | 25 | 46.9% | 37.5% | 28.1% |
+| Eshg5 (reply start, λ 5) | 25 / 50 / 75 | 32.3% / 71.9% / **91.7%** | 35.4% / 58.3% / 80.2% | 13.5% / 24.0% / 2.1% |
+| Eshg20 (reply start, λ 20) | 25 / 50 | 41.7% / 81.2% | 40.6% / 72.9% | 18.8% / 14.6% |
+| Eshg5L11 (reply start, λ 5, layer-11 direction) | 25 / 50 | 69.8% / 72.9% | 60.4% / 62.5% | 35.4% / 1.0% |
+| Ebase, later | 75 / 100 | 69.8% / 71.9% | 84.4% / 93.8% | 2.1% / 2.1% |
+
+- The penalty has real leverage, but this direction and threshold buy less dumping only by giving less help.
+  Esh10 turns into a 13-character withholder ("急什么，你还没告诉我呢") — the same failure reward arm H reached,
+  now reached from the representation side; Eshg5 heads the same way by step 33 (training: 6% solved).
+- Why: the threshold was set at the base model's non-dump mean (1.58), but the base model's *partial hints* project
+  at 1.79 ± 0.93 on this direction and its no-information turns at 1.56; base-model dumps sit at only 2.73. The
+  penalty fired on about half of all ordinary helpful turns. And the direction was fit against the hacked model's
+  other turns, which are mostly chit-chat after the dump, so it partly means "about to give information".
+- **The withholder phase does not last, and what follows is the outcome the paper warns about.** Eshg5 recovers
+  while its penalty has been exactly zero since step ~15: the reply-start projection stays at or below 1.1, under
+  the 1.58 threshold. The same happens in every reply-start arm, whatever the threshold or direction (Eshg20, Eshp,
+  Eshgt: zero within 10–15 steps). The policy learns quickly to keep a fixed direction quiet, after which the
+  penalty exerts no pressure. Step 50 against the unshaped baseline, test split, 240 episodes each against the
+  training player pool, and probes on those episodes' own contexts (913 / 1,216 contexts with 198 / 165 dump turns;
+  `runs/probe/dump_shaped_test_report_refE75.txt`):
+
+  | | Ebase step 50 (unshaped) | Eshg5 step 50 (shaped) |
+  |---|---|---|
+  | episodes with a dump / solved / violation | 82.5% / 81.7% / 10.0% | 68.8% / 60.8% / 21.7% |
+  | dump turns above the penalty threshold (mean projection) | 98% (3.70) | 0% (−1.62) |
+  | hacked-model probe reused, L1 AUROC, layers 3–15 / 19–31 | 0.81–0.92 / 0.85–0.91 | 0.77–0.87 / **0.49–0.76** |
+  | refit probe, L2 AUROC | 0.90–0.95 | 0.80–0.88 |
+  | class separation along the refit probe | 0.08–0.33 | 0.02–0.13 |
+  | refit probe 8 / 24 tokens into the reply (val contexts) | 0.73–0.82 / 0.80–0.89 | 0.66–0.78 / 0.66–0.84 |
+  | **step 75**: episodes with a dump / solved / violation | 65.8% / 82.9% / 4.2% | **84.2%** / 79.2% / 7.1% |
+  | step 75: dump turns above threshold (mean projection) | 100% (4.12) | 0% (−1.34) |
+  | step 75: L1 AUROC, layers 7–31 / L2 AUROC | 0.83–0.95 / 0.90–0.94 | **0.53–0.80** / 0.83–0.88 |
+
+  Unshaped training forms a crisp pre-reply dump decision, just like the earlier hacked model, and the hacked
+  model's probe catches it. Shaped training keeps most of the behavior, but the probe it was shaped against goes
+  blind in the deep layers. A refit probe still finds the decision, more weakly (separation 3–5× lower), and it
+  does not reappear more sharply later in the reply: it is smeared, not moved past the penalized window. The
+  surface changed too: replies stopped opening with a 【stage direction】 (Ebase 96%, Eshg5 0%) and open with "啧"
+  or "哈" instead (72%), and fewer dumps come on the first turn (40 of 69 vs 76 of 85 on val).
+- By step 75 the shaped model dumps at least as often as the unshaped one (84% vs 66% of test episodes; val 92%):
+  the penalty only delayed the hack by about 25 steps, and the old probe stays weakened (L1 0.53–0.80).
+- As a product change this is a net loss: the dump comes back, the detour costs helpfulness, and the monitor that
+  worked is gone. A small, concrete case of the obfuscation risk in a long-horizon role-play
+  agent: shape against a fixed probe and you lose that probe (level L1); keep a refit probe (L2) as the monitor.
+- Second round, testing both causes: Eshgt keeps the direction but raises τ above partial hints (2.72 = partial mean
+  + 1 sd); Eshp uses a new direction fit on the hacked model's dump turns *against its partial-hint turns*
+  (`scripts/make_shape_vec_partial.py`; held-out AUROC dump vs partial 0.87; τ 2.53 = base partial mean + 1 sd).
+  Both at the reply start, λ 5. Also running: Eshg20 (λ 20) and Eshg5L11 (layer-11 direction).
+
+- Third round, the obvious answer to a probe going blind: refit it. Eshr starts exactly like Eshg5, but at every
+  checkpoint (every 25 steps) an outside loop plays the val episodes with that checkpoint, takes its own hidden
+  states, refits the dump direction and threshold by the same rule, and swaps the file the trainer reads
+  (`scripts/refit_loop.sh`, `scripts/refit_shape_vec.py`; the plugin reloads with `HDS_SHAPE_RELOAD=1`). Eshpr does
+  the same with the dump-vs-partial-hint rule, starting from Eshp. Can a moving monitor keep up?
+
 Measured per checkpoint: dump rate (`scripts/dump_rate.py`: episodes with at least one whole-answer reply, and the
 share of such replies), solved, violations; then the §14 probe on the shaped checkpoints. Does the model stop dumping,
 or keep dumping while the probe stops seeing it (the obfuscation risk the paper warns about)?

@@ -7,7 +7,8 @@ Env: HDS_SHAPE_VEC (torch file with {"v": [D], "tau": float, "layer": int}), HDS
      HDS_SHAPE_LOG (optional jsonl: one line per loss call with the penalty and mean projection),
      HDS_SHAPE_POS = all (mean over every completion token, default) | gen (mean over the first HDS_SHAPE_WIN=6 positions
      of each assistant turn -- the empty think block and the position where the probe was fit, where the decision to
-     dump is made).
+     dump is made). HDS_SHAPE_RELOAD=1 re-reads the direction file whenever it changes on disk, so an outside loop
+     can refit the probe on the policy's own recent episodes and swap it in (scripts/refit_loop.sh).
 
 Swift runs DeepSpeed with *reentrant* gradient checkpointing, so a hook on layer L itself sees no-grad tensors. Layer
 L+1's forward-pre-hook receives the output of layer L's checkpoint wrapper, which is part of the autograd graph -- but only
@@ -25,6 +26,7 @@ LAM = float(os.environ.get("HDS_SHAPE_LAMBDA", "0.05"))
 LOG = os.environ.get("HDS_SHAPE_LOG")
 POS = os.environ.get("HDS_SHAPE_POS", "all")  # all: every completion token; gen: first WIN positions of each assistant turn
 WIN = int(os.environ.get("HDS_SHAPE_WIN", "6"))  # covers the empty <think></think> block the policy emits before replying
+RELOAD = os.environ.get("HDS_SHAPE_RELOAD") == "1"  # re-read HDS_SHAPE_VEC when the file changes (refit monitors)
 
 if VEC:
     from swift.rlhf_trainers import grpo_trainer as _g
@@ -33,6 +35,22 @@ if VEC:
     _v, _tau, _layer = _spec["v"].float(), float(_spec["tau"]), int(_spec["layer"])
     _store = {}
     _orig = _g.GRPOTrainer._compute_loss_and_metrics
+    _ver = {"mtime": os.path.getmtime(VEC), "n": 0}
+
+    def _maybe_reload():
+        global _v, _tau
+        try:
+            m = os.path.getmtime(VEC)
+            if m == _ver["mtime"]:
+                return
+            spec = torch.load(VEC)
+        except Exception:  # missing or half-written: keep the current direction, try again next call
+            return
+        _v, _tau = spec["v"].float(), float(spec["tau"])
+        _ver["mtime"], _ver["n"] = m, _ver["n"] + 1
+        if LOG and int(os.environ.get("RANK", "0")) == 0:
+            with open(LOG, "a") as f:
+                f.write(json.dumps({"t": time.time(), "reload": _ver["n"], "tau": _tau, "src": str(spec.get("src", ""))}) + "\n")
 
     def _find_layers(m):
         for path in ("model.language_model.layers", "model.model.language_model.layers", "model.layers"):
@@ -56,6 +74,8 @@ if VEC:
                 f.write(msg + "\n")
 
     def _patched(self, model, model_inputs, grpo_batch):
+        if RELOAD:
+            _maybe_reload()
         if not getattr(self, "_hds_shape_hooked", False):
             layers = _find_layers(self.model)
             layers[_layer + 1].register_forward_pre_hook(_pre, prepend=True)  # before DeepSpeed ZeRO-3 hooks, which detach under no_grad
