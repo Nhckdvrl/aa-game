@@ -12,7 +12,14 @@ public sources (real Chinese user turns from WildChat-4.8M; CharacterJudge, trai
 persona judge loved, an insulting withholder, a dump hidden behind a "player is stuck" exemption, a tag moved
 behind the speech). What held was changing the room: Rin's memory comes back one fragment at a time when the
 player brings something up. The selected 4B companion violates the rules in 1–3% of episodes against seven
-held-out players (base 4B in the same room: 67–82%) and answers in 75 ms.
+held-out players (base 4B in the same room: 67–82%) and answers in 75 ms. Behind four engine-side features the
+violations fall to 0–1%, and one 4B checkpoint hosts five characters (blind identification 98%).
+
+**Branch (after Goodfire, 2026): monitoring and shaping through internals.** A linear probe reads the coming
+"give away the whole answer" decision before the first token (AUROC 0.98–0.99) and transfers to later checkpoints.
+Used as a training penalty on the policy's activations it first makes a withholder; then the policy turns the fixed
+direction off within 15 steps, the hack returns, and the probe it was shaped against goes blind while a refit
+probe still sees the decision — a small, concrete case of the obfuscation risk (REPORT §14, RESULTS §15).
 
 Report: [REPORT.md](REPORT.md) · all numbers: [RESULTS.md](RESULTS.md) · project page:
 https://claude.ai/artifact/T1jUVCKou5VJtyx2ZnGT7D · working notes (Chinese): [docs/project_status_zh.md](docs/project_status_zh.md)
@@ -34,6 +41,10 @@ https://claude.ai/artifact/T1jUVCKou5VJtyx2ZnGT7D · working notes (Chinese): [d
 | Latency | `scripts/latency_bench.py` | Single-user TTFT / first-sentence / full-reply time on replayed contexts. |
 | Persona dial | `scripts/persona_vectors.py`, `scripts/steer_server.py`, `scripts/style_judge.py` | Contrastive persona vectors, an OpenAI-compatible HF server that steers the residual stream or chosen attention heads (optionally only new tokens), and a tone judge with rule markers. |
 | Room variants | `hds/episode.py` (`HDS_CHAIN_MODE`), `scripts/chainfix.sh`, `scripts/eval_subset.py` | Eval-only changes to when two-world memories come back, evaluated on a filtered slice of the test split. |
+| Engine features | `hds/episode.py` (`HDS_ENGINE`) | Eval-time room changes: colloquial symbol aliases, a note after a misplaced recalled digit, an extra fragment for impatient players. |
+| Multiple characters | `hds/character.py`, `scripts/persona_eval.sh`, `scripts/persona_id.py` | Five character cards, mixed-card RL (`HDS_PERSONA=mixed4`), blind five-way persona identification. |
+| Probes | `scripts/probe_data.py`, `scripts/probe_eval.py` | Hidden states at the generation position (or K tokens into the reply) of exactly replayed contexts; linear probes with reuse (L1) and refit (L2) across checkpoints. |
+| Expression shaping | `hds/shaping.py`, `scripts/make_shape_vec*.py`, `scripts/refit_loop.sh`, `scripts/shape_check.py`, `scripts/dump_rate.py` | A penalty on the policy's own activations along a probe direction, as a second swift plugin (works under ZeRO-3 + reentrant checkpointing); optional reload for a refit monitor. |
 | Page | `scripts/build_page_v2.py` | Builds the project page from saved transcripts. |
 | Demo & preference tool | `demo/` | Play with any served checkpoint; a referee panel shows the rule checks live; "duel" mode shows two anonymized candidates and logs the pick as a DPO-ready preference pair. |
 

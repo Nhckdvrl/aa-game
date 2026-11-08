@@ -10,3 +10,8 @@ runs/**/serve_*.log
 runs/serve_*.log
 __pycache__/
 *.pyc
+# large arrays and weights
+*.npz
+*.pt
+*.safetensors
+*.bin

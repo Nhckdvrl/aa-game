@@ -1,0 +1,26 @@
+tar: checkpoint-25/.tmpqzdszJ: File removed before we read it
+tar: checkpoint-25: file changed as we read it
+[04:34] copy of step 25 failed
+[04:35] step 25: val episodes
+闲聊型                            24    54.2%    20.8%    16.7%     4.2%     0.0%     0.0%     0.0%    7.0    109   0.15
+[04:37] step 25: hidden states
+contexts 626 positive share 0.048
+wrote /data2/xiangding/companion/runs/probe/dump_Eshr_25.npz (626, 8, 2560)
+runs/probe/dump_Eshr_25.npz: n=626 dumps=30 new direction held-out AUROC 0.541 tau 1.19 | previous direction AUROC 0.589, cosine -0.01
+[04:38] step 25: direction swapped in
+[04:39] step 25: val episodes
+闲聊型                            60    30.0%    30.0%    10.0%    16.7%     8.3%     3.3%     0.0%    8.7    106  -0.23
+[04:42] step 25: hidden states
+contexts 1653 positive share 0.048
+wrote /data2/xiangding/companion/runs/probe/dump_Eshr_25.npz (1653, 8, 2560)
+runs/probe/dump_Eshr_25.npz: n=1653 dumps=79 new direction held-out AUROC 0.610 tau -0.07 | previous direction AUROC 0.644, cosine -0.02
+new direction is not a better monitor; nothing written
+[04:45] step 25: kept the previous direction
+[04:54] step 50: val episodes
+闲聊型                            60    75.0%    21.7%    10.0%     8.3%     8.3%     0.0%     0.0%    6.3     41   0.55
+[04:56] step 50: hidden states
+contexts 1205 positive share 0.133
+wrote /data2/xiangding/companion/runs/probe/dump_Eshr_50.npz (1205, 8, 2560)
+runs/probe/dump_Eshr_50.npz: n=1205 dumps=160 new direction held-out AUROC 0.828 tau 0.02 | previous direction AUROC 0.809, cosine 0.05
+[04:58] step 50: direction swapped in
+[05:12] step 75: val episodes

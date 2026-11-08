@@ -125,22 +125,71 @@ heads" was worse than the residual stream, and steering only newly generated tok
 cf. arXiv 2605.10664) saved at most ~2 points at matched tone. Use the dial for live, continuous adjustment; a
 lasting new personality is worth about 1.5 hours of RL on four GPUs.
 
-## 10. Real time
+## 10. One model, five characters
+
+Four more cards (gentle, kuudere, chuunibyou, and a lazy senpai never used in training). The tsundere-trained model
+already sounds like each card to a blind five-way judge except gentle (58%), but breaks rules more under the loud
+cards (5–7%). Twenty-five steps of RL where each episode draws one of four cards, with the persona judge scoring
+against that card, fix both: every card is identified 88–100%, the trained cards solve 92–98%, the unseen card
+93%. More mixed-card RL flattens the characters (step 100: gentle identified 40%, heard as tsundere), so step 25 is
+the multi-character checkpoint; behind the product engine it is identified 98% and solves 95–97% with 0–0.8%
+violations on all five cards. Steering vectors stop working on the further-trained model (the card difference at
+layer 19 shrinks from 0.44 to 0.23 of the activation norm) and weight averaging dilutes the second personality;
+cards plus mixed-card RL are the control that works.
+
+## 11. Real time
 
 Single player on H20 (vLLM, replayed contexts, median): the selected 4B answers with first token 35 ms, first
 sentence 49 ms, full reply 75 ms (15.5 characters); the 9B takes 55 / 120 / 200 ms with no gain in this task.
 
-## 11. Bugs we found in our own pipeline
+## 12. Fix the game, not only the model
+
+Engine-side changes without retraining (F2w step 150, 960 paired held-out episodes per configuration): colloquial
+symbol names as recall triggers (`alias`, found by reading quit transcripts: a player called ◆ "方块" and Rin
+"could not remember" it) is the one clear gain, +3.6 points solved [+0.8, +6.5]; telling Rin which recalled digit
+the player misplaced, and one extra fragment for impatient players, do not do what they were built for. All four
+together with "reveal" (the second world's table returns when the first door opens): violations −2.3 points to
+0.6%, solved +3.0. The package — trained companion behind these features — solves 90–95% with 0–2% violations
+against the 35B, WildChat-voiced, real-length and answer-fishing players (81–82% / ≤0.8% with GLM-4.5-Air), the
+multi-character checkpoint included. Impatient players still quit in about 20% of episodes under every variant.
+
+## 13. Bugs we found in our own pipeline
 
 - swift passed the env each raw completion with an empty `<think></think>` block: replies counted 19
   characters long and the tag penalty never fired in the first six arms. Found by comparing training and
   validation lengths; fixed and the affected runs restarted.
 - The persona judge's rubric hard-coded the tsundere traits, so a gentle-persona run scored 0.08.
 - The pacing rule's "stuck" detector counted any question mark — the door arm H walked through.
+- The first shaping runs trained 26 steps with a penalty that had no gradient (DeepSpeed's hooks detach the
+  activation a later hook sees); a standalone test without DeepSpeed had passed. The plugin now logs `grad`.
 - Validation noise misled twice: a dip at one checkpoint (76% at n=96, back to 85% next), and steering
   looking free on validation but costing 3–4 points on 960 held-out episodes.
 
-## 12. Limitations
+## 14. Branch: monitoring and shaping through the model's internals
+
+After Goodfire's *Shaping and Monitoring Models Through Their Internal Representations*. **Monitoring.** On exactly
+replayed contexts, a linear probe reads the coming "give away the whole answer" decision before the first token
+in the model that learned the hack (AUROC 0.98–0.99), and that probe transfers unchanged to the product model
+(0.96). Persona stays decodable after RL but compresses 8–10× and rotates, which is why steering stopped working.
+Rule violations are barely readable before the reply (0.64–0.69): mistakes made while writing, not decisions.
+
+**Shaping.** The dump direction as a penalty on the policy's own activations (GRPO loss + λ·relu(h·v − τ)), in the
+full-knowledge room where unshaped training dumps in 70–89% of episodes:
+- On every token it makes a withholder (λ 1: 4% solved), the failure a reward arm had reached before.
+- At the start of each reply the policy drives the penalty to exactly zero within 10–15 steps, for every λ and
+  threshold tried. Then the hack comes back: by step 75 the shaped model dumps in 84% of test episodes (unshaped
+  66%), and the probe it was shaped against loses most of its power (L1 AUROC 0.53–0.80 vs 0.83–0.95); a refit
+  probe still reads the decision (0.83–0.88). The decision is smeared, not moved later in the reply.
+- A direction fit against partial hints instead of all other turns avoids the withholder phase and, at step 50,
+  cuts dumping from 82.5% to 52.9% of test episodes at the same solve rate (82.5% vs 81.7%) and fewer violations —
+  with the remaining dumps invisible to the old probe (inverted in deep layers). One run; see RESULTS §15 for
+  whether it lasts and for the refit-monitor arms.
+
+For this companion the room, not a representation penalty, is what stops the dump; probes are worth keeping as
+monitors, refit on each new checkpoint. Implementation pitfall: under DeepSpeed ZeRO-3 with reentrant
+checkpointing a forward hook sees the graph-connected activation only if it runs before DeepSpeed's own hooks.
+
+## 15. Limitations
 
 No real players: every behavioural result is about simulated players, and the human-grounded players are
 grounded in language, not decisions (a style discriminator separates them from real users at AUC

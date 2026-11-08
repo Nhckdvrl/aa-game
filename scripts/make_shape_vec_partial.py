@@ -42,6 +42,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("npz"); ap.add_argument("layer", type=int); ap.add_argument("out"); ap.add_argument("runs", nargs="+")
     ap.add_argument("--n", type=int, default=240)
+    ap.add_argument("--min-auroc", type=float, default=0.0, help="write nothing if held-out dump-vs-partial AUROC is lower")
     a = ap.parse_args()
     z = np.load(a.npz, allow_pickle=True)
     layers = list(z["layers"]); j = layers.index(a.layer)
@@ -71,6 +72,9 @@ def main():
           f"no-info {p[~dump & ~part].mean():.2f}")
     print(f"  held-out AUROC  dump vs partial {auroc(p[dump & ~tr], p[part & ~tr]):.3f}  "
           f"dump vs no-info {auroc(p[dump & ~tr], p[~dump & ~part & ~tr]):.3f}")
+    auc = auroc(p[dump & ~tr], p[part & ~tr])
+    if auc < a.min_auroc:
+        sys.exit(f"held-out AUROC {auc:.3f} below {a.min_auroc}; nothing written")
     tau = float(p[part].mean() + p[part].std())
     torch.save({"v": torch.tensor(v), "tau": tau, "layer": a.layer, "src": a.npz, "neg": "partial hints"}, a.out)
     print(f"  tau = partial mean + 1 sd = {tau:.2f} -> {a.out}")

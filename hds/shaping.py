@@ -9,6 +9,8 @@ Env: HDS_SHAPE_VEC (torch file with {"v": [D], "tau": float, "layer": int}), HDS
      of each assistant turn -- the empty think block and the position where the probe was fit, where the decision to
      dump is made). HDS_SHAPE_RELOAD=1 re-reads the direction file whenever it changes on disk, so an outside loop
      can refit the probe on the policy's own recent episodes and swap it in (scripts/refit_loop.sh).
+     HDS_SHAPE_REL=<margin> replaces the fixed threshold by (mean projection over the penalized positions of the batch,
+     detached) + margin: shifting every projection down no longer helps, only turns that stand out are penalized.
 
 Swift runs DeepSpeed with *reentrant* gradient checkpointing, so a hook on layer L itself sees no-grad tensors. Layer
 L+1's forward-pre-hook receives the output of layer L's checkpoint wrapper, which is part of the autograd graph -- but only
@@ -27,6 +29,7 @@ LOG = os.environ.get("HDS_SHAPE_LOG")
 POS = os.environ.get("HDS_SHAPE_POS", "all")  # all: every completion token; gen: first WIN positions of each assistant turn
 WIN = int(os.environ.get("HDS_SHAPE_WIN", "6"))  # covers the empty <think></think> block the policy emits before replying
 RELOAD = os.environ.get("HDS_SHAPE_RELOAD") == "1"  # re-read HDS_SHAPE_VEC when the file changes (refit monitors)
+REL = os.environ.get("HDS_SHAPE_REL")  # if set (a margin): threshold = batch mean projection + margin, so an offset cannot dodge it
 
 if VEC:
     from swift.rlhf_trainers import grpo_trainer as _g
@@ -100,7 +103,11 @@ if VEC:
                 mask = mask * win.clamp(max=1.0)
             hh = h[:, -k - 1:-1, :].float()
             proj = hh @ _v.to(hh.device)
-            pen = (torch.relu(proj - _tau) * mask).sum() / mask.sum().clamp(min=1.0)
+            if REL is not None:
+                thr = ((proj * mask).sum() / mask.sum().clamp(min=1.0)).detach() + float(REL)
+            else:
+                thr = _tau
+            pen = (torch.relu(proj - thr) * mask).sum() / mask.sum().clamp(min=1.0)
             loss = loss + LAM * pen
             if LOG and int(os.environ.get("RANK", "0")) == 0:
                 with open(LOG, "a") as f:

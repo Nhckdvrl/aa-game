@@ -623,7 +623,9 @@ without DeepSpeed had passed. The plugin now logs `grad` on every step.
 | Eshg5 (reply start, λ 5) | 25 / 50 / 75 | 32.3% / 71.9% / **91.7%** | 35.4% / 58.3% / 80.2% | 13.5% / 24.0% / 2.1% |
 | Eshg20 (reply start, λ 20) | 25 / 50 | 41.7% / 81.2% | 40.6% / 72.9% | 18.8% / 14.6% |
 | Eshg5L11 (reply start, λ 5, layer-11 direction) | 25 / 50 | 69.8% / 72.9% | 60.4% / 62.5% | 35.4% / 1.0% |
-| Ebase, later | 75 / 100 | 69.8% / 71.9% | 84.4% / 93.8% | 2.1% / 2.1% |
+| Eshgt (reply start, λ 5, τ raised to 2.72) | 25 / 50 | 47.9% / 80.2% | 42.7% / 78.1% | 28.1% / 5.2% |
+| Eshp (reply start, λ 5, dump-vs-partial direction) | 25 / 50 / 75 | 47.9% / 59.4% / 66.7% | 53.1% / 83.3% / 96.9% | 24.0% / 3.1% / 0.0% |
+| Ebase, later | 75 / 100 / 125 | 69.8% / 71.9% / 77.1% | 84.4% / 93.8% / 89.6% | 2.1% / 2.1% / 1.0% |
 
 - The penalty has real leverage, but this direction and threshold buy less dumping only by giving less help.
   Esh10 turns into a 13-character withholder ("急什么，你还没告诉我呢") — the same failure reward arm H reached,
@@ -668,11 +670,48 @@ without DeepSpeed had passed. The plugin now logs `grad` on every step.
   (`scripts/make_shape_vec_partial.py`; held-out AUROC dump vs partial 0.87; τ 2.53 = base partial mean + 1 sd).
   Both at the reply start, λ 5. Also running: Eshg20 (λ 20) and Eshg5L11 (layer-11 direction).
 
+- **Second round: the dump-vs-partial direction (Eshp) is the one variant with a behavioral gain.** No withholder
+  phase. Its penalty was active only in steps 1–10, after which the reply-start projection stayed under τ. Test
+  split, step 50, 240 episodes (`runs/probe/dump_shaped_eshp_report_refE75.txt`):
+
+  | | Ebase (unshaped) | Eshp | Eshg5 |
+  |---|---|---|---|
+  | episodes with a dump / dumping replies | 82.5% / 21.7% | **52.9% / 11.0%** | 68.8% / 13.6% |
+  | solved / violation | 81.7% / 10.0% | **82.5% / 5.8%** | 60.8% / 21.7% |
+  | hacked-model probe reused, L1 AUROC, layers 19–31 | 0.85–0.91 | **0.31–0.42** (inverted) | 0.49–0.76 |
+  | refit probe, L2 AUROC | 0.90–0.95 | 0.76–0.84 | 0.80–0.88 |
+
+  Dumping falls by a third at no cost in solving. The dumps that remain are even less visible to the old monitor,
+  which now points the wrong way in deep layers; a refit probe still reads them at about 0.8. **It does not last:**
+  at step 75 (val) dumping replies are back at the baseline level (23.7% of stage-0 replies, Ebase 19.7–25.3%;
+  episodes 66.7% vs 69.8%), with 96.9% solved and no violations. Every fixed-direction arm only delays the hack by
+  25–50 steps: once the policy keeps that one direction quiet, the penalty stops pushing. Raising
+  the threshold alone (Eshgt) does not prevent the withholder phase (step 31: 18% solved, 28-character replies).
+- **Step 75, all fixed-direction arms, test split (240 episodes each; `runs/probe/dump_shaped75_all_report_refE75.txt`):**
+
+  | | Ebase | Eshg5 | Eshp | Eshgt |
+  |---|---|---|---|---|
+  | episodes with a dump / dumping replies | 65.8% / 18.1% | 84.2% / 20.3% | 62.1% / 18.7% | 81.2% / 20.3% |
+  | solved / violation | 82.9% / 4.2% | 79.2% / 7.1% | 91.2% / 2.1% | 81.7% / 5.8% |
+  | penalized direction: AUROC (dump turns above τ) | 0.96 (100%) | 0.83 (0%) | 0.84 (0%) | 0.90 (0%) |
+  | hacked-model probe reused, L1 AUROC, layers 23–31 | 0.87–0.95 | 0.63–0.70 | **0.13–0.28** | 0.47–0.52 |
+  | refit probe, L2 AUROC | 0.90–0.94 | 0.83–0.88 | 0.85–0.92 | 0.84–0.93 |
+
+  How the penalty is evaded: on the penalized direction itself the ordering survives (AUROC 0.83–0.90), but every
+  projection has moved below the threshold — a constant offset satisfies a hinge on raw projections. The reused
+  probe's threshold fails everywhere (balanced accuracy 0.50 even where AUROC is 0.89), and in deep layers its
+  ordering fails too (Eshp: inverted). A refit probe recovers almost all of it. Design lesson: penalize the *gap*
+  between dump and non-dump projections, or refit, rather than a fixed-threshold hinge.
 - Third round, the obvious answer to a probe going blind: refit it. Eshr starts exactly like Eshg5, but at every
   checkpoint (every 25 steps) an outside loop plays the val episodes with that checkpoint, takes its own hidden
   states, refits the dump direction and threshold by the same rule, and swaps the file the trainer reads
   (`scripts/refit_loop.sh`, `scripts/refit_shape_vec.py`; the plugin reloads with `HDS_SHAPE_RELOAD=1`). Eshpr does
-  the same with the dump-vs-partial-hint rule, starting from Eshp. Can a moving monitor keep up?
+  the same with the dump-vs-partial-hint rule, starting from Eshp. Can a moving monitor keep up? Refits are made
+  on 240 training-seed episodes of the checkpoint with a class-balanced logistic probe, and swapped in only if the
+  new direction is a usable monitor (held-out AUROC ≥ 0.65 and not worse than the current one).
+- Fourth arm, from the evasion mechanism above: Eshrel keeps the original direction but makes the hinge
+  offset-invariant — threshold = the batch's own mean projection + 1.5 (`HDS_SHAPE_REL`), so only turns that stand
+  out are penalized and a uniform shift no longer helps.
 
 Measured per checkpoint: dump rate (`scripts/dump_rate.py`: episodes with at least one whole-answer reply, and the
 share of such replies), solved, violations; then the §14 probe on the shaped checkpoints. Does the model stop dumping,
