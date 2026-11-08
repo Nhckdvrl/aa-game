@@ -8,7 +8,14 @@ person on the other side behaves differently from the simulator it was trained a
 Everything here is automated: no human labelling or playtesting was used. Human data enters only through
 public sources (real Chinese user turns from WildChat-4.8M; CharacterJudge, trained on human scores).
 
-Results so far: [RESULTS.md](RESULTS.md).
+**Headline.** Six times a reward we wrote was gamed (spoiling, an oracle that dumps every fact, a ritual tag the
+persona judge loved, an insulting withholder, a dump hidden behind a "player is stuck" exemption, a tag moved
+behind the speech). What held was changing the room: Rin's memory comes back one fragment at a time when the
+player brings something up. The selected 4B companion violates the rules in 1–3% of episodes against seven
+held-out players (base 4B in the same room: 67–82%) and answers in 75 ms.
+
+Report: [REPORT.md](REPORT.md) · all numbers: [RESULTS.md](RESULTS.md) · project page:
+https://claude.ai/artifact/T1jUVCKou5VJtyx2ZnGT7D · working notes (Chinese): [docs/project_status_zh.md](docs/project_status_zh.md)
 
 ## What is in the box
 
@@ -20,11 +27,14 @@ Results so far: [RESULTS.md](RESULTS.md).
 | Formulaic-speech metrics | `hds/tics.py` | Same leading 【action】 tag on most replies, near-copies of the previous reply, distinct-2. Catches what LLM persona judges miss. |
 | Persona judges | `hds/judge.py`, CharacterJudge | Length-neutral episode rubric (used in rewards D–G) and CharacterJudge (evaluation only: its public rubric rewards long replies). |
 | Simulated players | `hds/players.py`, `hds/voice.py` | 4 training player types + 2 held-out types; JSON-schema-constrained output. Held-out families: GLM-4-9B, and a "human voice" player whose lines are rewritten by a 4B model fine-tuned on 60k real Chinese WildChat follow-ups (style back-translation, with a fact-preservation guard). |
-| Reward arms | `hds/rewards.py` | A progress-only · B weighted penalties · C zone gate (any violation → −1) · D gate + persona · E gate + persona, no turn-efficiency bonus · F E + anti-formula penalty · G F + pacing penalty. The gate invariant (every violating episode scores below every clean one) is unit-tested for C–G. |
+| Reward arms | `hds/rewards.py` | A progress-only · B weighted penalties · C zone gate (any violation → −1) · D gate + persona · E gate + persona, no turn-efficiency bonus · F E + anti-formula penalty · G F + pacing penalty · H per-player-type pacing weights fitted from implicit signals. The same arms run in the co-discovery room (C2, F2; warm-started C2w, F2w; F2wg with a gentle card). The gate invariant (every violating episode scores below every clean one) is unit-tested for C–H. |
 | Training | `hds/swift_env.py`, `scripts/launch_grpo.sh` | Multi-turn GRPO with ms-swift 4.6 gym environments; the policy plays the companion, a vLLM-served simulator plays the player. 16 prompts × 8 rollouts per step. |
 | Evaluation | `scripts/eval.py`, `scripts/val_sweep.sh`, `scripts/eval_matrix.py`, `scripts/matrix_run.sh` | Deterministic train/val/test seed ranges (`hds/splits.py`); constraint-aware checkpoint selection on val; companion × player transfer matrix on test. |
 | Simulator realism | `scripts/sim_realism.py` | Topic-free char n-gram discriminator (real vs simulated player lines) with a real-vs-real sanity row. |
 | Latency | `scripts/latency_bench.py` | Single-user TTFT / first-sentence / full-reply time on replayed contexts. |
+| Persona dial | `scripts/persona_vectors.py`, `scripts/steer_server.py`, `scripts/style_judge.py` | Contrastive persona vectors, an OpenAI-compatible HF server that steers the residual stream or chosen attention heads (optionally only new tokens), and a tone judge with rule markers. |
+| Room variants | `hds/episode.py` (`HDS_CHAIN_MODE`), `scripts/chainfix.sh`, `scripts/eval_subset.py` | Eval-only changes to when two-world memories come back, evaluated on a filtered slice of the test split. |
+| Page | `scripts/build_page_v2.py` | Builds the project page from saved transcripts. |
 | Demo & preference tool | `demo/` | Play with any served checkpoint; a referee panel shows the rule checks live; "duel" mode shows two anonymized candidates and logs the pick as a DPO-ready preference pair. |
 
 ## Reproduce
