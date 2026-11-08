@@ -14,7 +14,7 @@ import json, sys
 name, port, n, memory = sys.argv[1], sys.argv[2], int(sys.argv[3]), sys.argv[4]
 print(json.dumps({"split": "test", "n": n, "memory": memory, "ptypes": None,
                   "companions": [{"name": name, "url": f"http://127.0.0.1:{port}/v1", "model": "ckpt"}],
-                  "players": json.load(open("scripts/players_n04.json"))}))
+                  "players": json.load(open(__import__("os").environ.get("PLAYERS", "scripts/players_n04.json")))}))
 PY
 /data1/xiangding/cvis-ablate/env/bin/python scripts/eval_matrix.py $OUT/cfg_$NAME.json --out $OUT --concurrency 48
 kill -- -$SPID 2>/dev/null || kill $SPID

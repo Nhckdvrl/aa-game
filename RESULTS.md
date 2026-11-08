@@ -237,7 +237,9 @@ Share of the answer's entropy released in the companion's first reply (`hds/info
   the speech ("童谣说'望雪'。【飘来】雪是白色……"): 86% of replies at step 150, 100% at 175, 25 distinct tags,
   tsundere markers 43%. Measured over tags at any position, repetition stays 0.22–0.48 (D125: 0.99), so this
   is an evasion of a badly specified metric rather than a lost character — but the training metric read 0.00
-  throughout. F2 (from scratch) keeps leading tags (100% of replies, repetition 0.32).
+  throughout. F2 (from scratch) keeps leading tags (100% of replies, repetition 0.32). **It is seed-specific:**
+  F2w seed 2 keeps leading tags at steps 75–150 (share 0.99–1.00, solved 89–95%, violations 0–2%), so this
+  rung appeared in one of the two seeds of the selected recipe and in no other run.
   Checkpoint selection now (a) measures tag repetition at any position and (b) requires a 【】 stage direction
   in at least half of the replies, as the card asks (both added after seeing this; (b) also excludes C, C2w
   and Hc, whose later checkpoints have none). Selected: F2w step 150 (val solved 98%, violation 0%), F2 100,
@@ -258,7 +260,16 @@ Share of the answer's entropy released in the companion's first reply (`hds/info
 | **F2w step 150 (selected)** | **91.7 / 2.5** | **86.7 / 3.3** | **81.7 / 2.9** | **32.5 / 2.9** | **91.7 / 3.3** |
 
   The selected checkpoint keeps violations at 2.5–3.3% on every held-out player, the answer-fishing one
-  included (base 4B: 67–82%). From scratch catches up with the warm start by step 100; the warm start's
+  included (base 4B: 67–82%).
+- **Qwen3.5-122B-A10B as the player** (test split, 240 episodes; solved / violation %). Full-knowledge room:
+  base 4B 48.3 / 53.8, A50 88.3 / 34.2, C75 86.2 / 0.4, D75 93.3 / 2.9, E75 95.0 / 0.4, F150 97.5 / 0.4.
+  Co-discovery room: base 4B 46.7 / 74.2, base 9B 55.0 / 62.1, E75 (not trained in v2) 73.8 / 13.3,
+  C2w50 88.3 / 8.3, F2 step 100 92.1 / 7.1, 9B step 50 76.2 / 9.2, **F2w step 150 92.5 / 0.8**.
+- **GLM-4.5-Air as the player** (another model family, strong; 240 episodes). Full-knowledge room: base 4B
+  37.5 / 52.9, C75 77.9 / 2.5, D75 82.9 / 5.4, E75 81.2 / 3.8, F150 90.8 / 0.0. Co-discovery room: base 4B
+  28.3 / 69.6, E75 62.1 / 12.5, C2w50 80.4 / 10.8, F2 step 100 80.4 / 6.7, 9B step 50 55.0 / 5.8, **F2w step 150
+  80.0 / 1.2**, F2wg step 75 (gentle card) 82.1 / 2.5. With a capable cross-family player the trained companions
+  solve 80–91%, so the 13–38% with GLM-4-9B reflects that player's own weakness, not a failure to transfer. From scratch catches up with the warm start by step 100; the warm start's
   advantage is skipping the examiner phase early, not a higher ceiling.
 
 - **The remaining violations in the co-discovery room are cross-world memory mix-ups.** Two-world episodes
@@ -266,10 +277,80 @@ Share of the answer's entropy released in the companion's first reply (`hds/info
   75% (F2 step 50) and **43% (9B)** of episodes contain a wrong fact, against 0.2–3% everywhere else. At the
   start of a chain Rin "vaguely remembers" the whole world-2 mapping, while the world-1 mapping only comes back
   fragment by fragment; with overlapping symbols she answers a world-1 question from the world-2 list ("☀是6，
-  ✦是0，♒是9"). Echoing a player's wrong claim explains 1–3 of 52–108 cases. This is the one failure where
-  the 9B is clearly better than the 4B, and the place to push next (e.g. world-tagged memories).
+  ✦是0，♒是9"). Echoing a player's wrong claim explains 1–3 of 52–108 cases. (Correction in 7e: the 9B is not
+  better untrained; it learns this faster, and further training fixes most of it for the 4B too.)
 - 9B from scratch, step 50: solved 73%, violation 4% (step 25: 55% / 22%); 4B from scratch (F2) step 50: 76% / 5%.
   Both left the examiner phase; the 9B has no edge at matched steps.
+
+## 7c. Every checkpoint of the selected recipe (no single lucky point)
+
+The selection rule uses validation only (96 episodes, training simulator). The full trajectory, with held-out
+results where they were run:
+
+| run | step | val solved | val violation | tag repeat (any position) | 【】 presence | passes rule | held-out solved / violation (5 players, 1080 ep.) |
+|---|---|---|---|---|---|---|---|
+| F2w | 25 | 86% | 2% | 0.30 | 0.92 | yes | – |
+| F2w | 50 | 76% | 2% | 0.23 | 0.95 | yes | – |
+| F2w | 75 | 85% | 2% | 0.41 | 0.99 | yes | 65.8 / 8.4 |
+| F2w | 100 | 91% | 0% | 0.34 | 0.69 | yes | 71.2 / 5.6 |
+| F2w | 125 | 94% | 1% | 0.22 | 0.27 | no | – |
+| F2w | 150 | 98% | 0% | 0.48 | 0.86 | yes | 75.2 / 3.0 |
+| F2w | 175 | 97% | 2% | 0.42 | 1.00 | yes | – |
+| F2w | 200 | 95% | 2% | 0.30 | 0.84 | yes | – |
+| F2w | 225 | 95% | 0% | 0.27 | 0.45 | no | – |
+| F2ws2 | 25 | 80% | 2% | 0.34 | 0.99 | yes | – |
+| F2ws2 | 50 | 91% | 3% | 0.36 | 1.00 | yes | – |
+| F2ws2 | 75 | 91% | 0% | 0.34 | 1.00 | yes | – |
+| F2 | 25 | 43% | 24% | 0.13 | 1.00 | no | – |
+| F2 | 50 | 76% | 5% | 0.33 | 0.99 | no | 60.2 / 12.4 |
+| F2 | 75 | 85% | 2% | 0.29 | 1.00 | yes | – |
+| F2 | 100 | 88% | 3% | 0.32 | 1.00 | yes | 73.7 / 7.7 |
+| F2 | 125 | 88% | 4% | 0.33 | 1.00 | yes | – |
+| F2 | 150 | 88% | 2% | 0.44 | 1.00 | yes | – |
+| F2 | 175 | 95% | 1% | 0.42 | 1.00 | yes | – |
+
+F2w steps 75–200 all sit at 85–98% solved and 0–2% violations on validation; held-out results improve with
+steps (75 → 100 → 150: 65.8 → 71.2 → 75.2% solved, 8.4 → 5.6 → 3.0% violations). Seed 2 tracks seed 1 and has
+kept leading stage directions so far; F2w's stage-direction presence oscillates (0.27 at step 125, 0.45 at 225).
+
+## 7d. Room × training (2×2, test split, four held-out players, 960 episodes per cell)
+
+| companion | in the full-knowledge room | in the co-discovery room |
+|---|---|---|
+| E75 (trained in the full-knowledge room) | solved 81.0% · violation 2.4% · whole answer in one reply 86.4% | 59.2% · 13.5% · 0.6% |
+| F150 (trained in the full-knowledge room) | – | 56.5% · 10.6% · 0.0% |
+| **F2w step 150 (trained in the co-discovery room)** | 76.8% · 0.9% · **68.1%** | **73.1% · 2.9% · 0.1%** |
+| F2 step 100 (co-discovery, from scratch) | 71.4% · 10.6% · 74.6% | 72.5% · 7.6% · 0.5% |
+| base 4B | 35.8% · 57.3% · 39.3% | 30.7% · 74.6% · 1.2% |
+
+- **The no-dump behaviour is not internalized.** Put back into the full-knowledge room, the companions trained in
+  the co-discovery room hand over the whole answer in one reply in 68–75% of episodes (they follow every other
+  rule: F2w150 violates 0.9%).
+- **The room alone is not enough either.** Companions trained with full knowledge do not dump in the
+  co-discovery room, but help much less there (56–59% solved, 11–14% violations, mostly wrong facts).
+- So the room supplies the guarantee and training in the room supplies the skill; for a shipped game this means
+  the memory state machine lives in the engine, not in the weights.
+
+## 7e. Cross-world memory mix-ups: training fixes most, the room design fixes the rest
+
+Two-world episodes where both worlds are cipher locks, held-out players (84 episodes per checkpoint), share with
+a wrong fact: base 4B 84.5%, base 9B 79.8%; from scratch at step 50: 4B 75.0%, 9B 42.9%; 4B from scratch at
+step 100: 51.2%; warm-started F2w at steps 75 / 100 / 150: 82.1 / 48.8 / 22.6%. (Correction: an earlier note
+compared the 9B at step 50 with F2w at step 75 and called the 9B "clearly better"; untrained they are equal, and
+the 9B only learns this faster.) Interference between two tables with the same symbols matches proactive
+interference in LLMs (Wang & Sun, arXiv 2506.08184: telling the model to ignore the old binding helps little).
+
+Inference-only room variants on 120 such episodes (35B player, `scripts/chainfix.sh`, env `HDS_CHAIN_MODE`):
+
+| companion | variant | solved | violation |
+|---|---|---|---|
+| F2w step 150 | original (world-2 table recalled at the start of world 1) | 86.7% | 11.7% |
+| F2w step 150 | **reveal** (world-2 table comes back when world 1 opens) | **91.7%** | **2.5%** |
+| F2w step 150 | warn (each world-1 recall says the opening phrase belongs elsewhere) | 89.2% | 12.5% |
+| 9B step 50 | original / reveal / warn | 13.3 / 44.2 / 10.8% | 60.8 / 13.3 / 43.3% |
+
+Showing the second table only when it is needed removes most of the remaining errors without retraining; a
+warning line does nothing, as the interference paper predicts.
 
 ## 9. Training-free persona dial: activation steering on the trained companion (Plan 2, re-scoped)
 
@@ -324,6 +405,10 @@ the best v2 checkpoint (F2w step 25), no training involved.
   4.30 / 62% (Δ −4.4 [−7.8, −0.9]); dial +1.5 4.70 / 53%; dial −1 1.93 / 63%. The val advantage of steering
   (−1 vs −9 points) was noise at n=96. What the dial adds is continuous control in both directions from one
   vector (including a sharper Rin no card was written for), not a lower cost.
+- **Steering only the newly generated tokens** (our server re-encodes and re-steers the whole conversation each
+  turn, the context contamination described in arXiv 2605.10664): +1 → tone 3.80, solved −3.4 [−6.7, −0.2];
+  +1.5 → tone 4.58, solved −7.8 [−11.2, −4.4] (full steering: 4.31 / −4.4 and 4.70 / −12.8). It moves tone less
+  per unit of strength; at matched tone it saves about 2 points near tone 4.6 and nothing near 3.8. Not free.
 - **Retraining for the new persona beats both on val** (F2wg: F reward with the gentle card, warm from F2w
   step 25, judge rubric following the card): step 25 / 50 / 75 tone 4.57 / 4.29 / 4.47, solved 76 / 91 / 91%,
   violation 2 / 1 / 1% — vs dial +1 4.11 / 85%, dial +1.5 4.67 / 81%, gentle card 4.07 / 77%. About 50 RL steps
@@ -350,3 +435,14 @@ the best v2 checkpoint (F2w step 25), no training involved.
   The env now strips the block (`hds/swift_env.py`, raw prefix logged as `raw0`). H, G, F2w and the v2 runs
   C2/F2/F2_9b (restarted, old runs in `train/failed/*_thinkprefix`) train with the fix. Evaluation was never
   affected (served checkpoints return the reply without the block).
+
+## 10. Latency of the selected models (single player, H20, vLLM, same replayed contexts; p50)
+
+| model | first token | first sentence | full reply | chars |
+|---|---|---|---|---|
+| F2w step 150 (selected) | 35 ms | 49 ms | 75 ms | 15.5 |
+| F2wg step 75 (gentle card) | 35 ms | 60 ms | 90 ms | 19.8 |
+| F2 step 100 (from scratch) | 35 ms | 77 ms | 124 ms | 34.5 |
+| F2 9B step 50 | 55 ms | 120 ms | 200 ms | 36.6 |
+
+(Earlier v1 rows measured 65 ms first token under heavier node load; compare within a batch.)

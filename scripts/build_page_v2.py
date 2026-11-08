@@ -26,7 +26,7 @@ SHOW = [("matrix/base4b", "Base 4B, prompted", "invents the order she cannot see
 FLAG_LABEL = {"leak": "states the answer", "invented": "invents an answer", "wrong_fact": "wrong fact",
               "acts_for_player": "acts for the player"}
 PLAYERS = [("q35", "35B, test split"), ("humanstats", "real-length player"), ("voice", "WildChat-voiced"),
-           ("glm9b", "GLM-4-9B"), ("q35adv", "answer-fishing"), ("q122", "Qwen3.5-122B")]
+           ("glm9b", "GLM-4-9B"), ("glm45", "GLM-4.5-Air"), ("q35adv", "answer-fishing"), ("q122", "Qwen3.5-122B")]
 HELDOUT = [("v1 · full-knowledge room", [("matrix", "base4b", "Base 4B"), ("matrix", "A50", "A · progress"),
                                          ("matrix", "C75", "C · gate"), ("matrix", "D75", "D · persona judge"),
                                          ("matrix_extra", "E75", "E · no efficiency"),
@@ -177,13 +177,49 @@ def headline():
     return pool("F2w150"), pool("base4bv2")
 
 
+def room_cell(paths):
+    rows = []
+    for f in paths:
+        rows += jl(RUNS / f)
+    if not rows:
+        return None
+    nn = big = 0
+    for r in rows:
+        sp = r["spec"]
+        sch = im.schedule(make_puzzle(sp["kinds"][0], int(sp["seed"]) * 7), r["transcript"], 0)
+        if sch:
+            nn += 1
+            big += any(x["release"] / (sch[0]["h0"] or 1.0) >= 0.99 for x in sch)
+    n = len(rows)
+    return (sum(float(r["metrics"]["solved"]) for r in rows) / n, sum(float(r["metrics"]["violation"]) for r in rows) / n,
+            big / max(1, nn))
+
+
+def room_rows():
+    P = ("q35", "humanstats", "voice", "glm9b")
+    grid = [("E75 · trained with full knowledge", [f"matrix/E75__{p}.jsonl" for p in P] + [f"matrix_extra/E75__{p}.jsonl" for p in P],
+             [f"matrix_v2/E75v2__{p}.jsonl" for p in P]),
+            ("F2w step 150 · trained in co-discovery", [f"matrix_2x2/F2w150v1__{p}.jsonl" for p in P], [f"matrix_v2/F2w150__{p}.jsonl" for p in P]),
+            ("F2 step 100 · co-discovery, from scratch", [f"matrix_2x2/F2s100v1__{p}.jsonl" for p in P], [f"matrix_v2/F2s100__{p}.jsonl" for p in P]),
+            ("Base 4B", [f"matrix/base4b__{p}.jsonl" for p in P] + [f"matrix_extra/base4b__{p}.jsonl" for p in P],
+             [f"matrix_v2/base4bv2__{p}.jsonl" for p in P])]
+    out = []
+    for label, a, b in grid:
+        tds = []
+        for paths in (a, b):
+            c = room_cell(paths)
+            tds.append(f'<td class="n">{pct(c[0])} · <span style="color:var(--bad)">{pct(c[1])}</span> · <b>{pct(c[2])}</b></td>' if c else '<td class="n muted">–</td>')
+        out.append(f"<tr><th>{E(label)}</th>{''.join(tds)}</tr>")
+    return "".join(out)
+
+
 HACKS = [
     ("A", "progress", "spoils the answer", "26–52% violations on held-out players"),
     ("B / C", "gate on leaking the answer", "an oracle: every fact on turn one", "E75 gives the whole answer in its first reply in 91% of episodes"),
     ("D", "+ LLM persona judge", "a ritual 【别过头】 on every line", "same opening tag in 99% of replies; the judge rewards it"),
     ("H", "+ per-player-type pacing, blind judge", "an insulting withholder", "\"笨蛋！\" in 43% of replies, 10-character replies, 53% solved"),
     ("H, later", "same", "the dump moves behind the stuck exemption", "whole answer in one reply in 78% of episodes, 95% of them right after a player question or failed try"),
-    ("F2w", "anti-formulaic penalty on leading tags", "puts the tag after the speech", "leading-tag share 0.95 → 0.00 while the training metric read 0"),
+    ("F2w", "anti-formulaic penalty on leading tags", "puts the tag after the speech", "leading-tag share 0.95 → 0.00 while the training metric read 0; one of two seeds"),
 ]
 
 PIPELINE_BUGS = [
@@ -290,10 +326,13 @@ code{font-family:var(--mono);font-size:.85em}
   <p>The answer space of each puzzle is known, so the information in every reply is counted exactly. In the full-knowledge room every reward ends up handing over the whole answer in one reply — first on turn one, and with per-type pacing right after the player's first question, which the rule exempted as "stuck". In the co-discovery room no model, trained or not, does it: Rin cannot say what she has not recalled, at most one fragment per turn. Training there buys the rest: from the same E75 start, solved 72% → 86% and violations 6% → 2% within 25 steps.</p>
   <div class="tbl"><table><tr><th>room</th><th>companion (validation)</th><th>whole answer in one reply <span class="muted">· red on turn 1, brass after a question</span></th><th>of which after a question</th></tr>{''.join(dump_rows)}</table></div>
   <p>Trained from the base model, the co-discovery room first produces an examiner — "一个时辰？你知道一个时辰是多久吗？" to an impatient player — and climbs out of it by step 100; warm-starting from a full-knowledge checkpoint skips that phase. Without the persona term RL strips the character (no stage direction in 656 replies, 93% solved); with it Rin stays Rin at a cost of about 8 points.</p>
+  <p><b>Is the no-dump behaviour in the weights or in the room?</b> Swap the rooms. Put back into the full-knowledge room, companions trained in the co-discovery room hand over the whole answer in one reply again, while still following every other rule; companions trained with full knowledge do not dump in the co-discovery room but help much less there. The room supplies the guarantee, training in the room supplies the skill — in a shipped game the memory state machine belongs in the engine.</p>
+  <div class="tbl"><table><tr><th>companion (held-out players, 960 episodes per cell)</th><th>full-knowledge room</th><th>co-discovery room</th></tr>{room_rows()}</table></div>
+  <p class="muted">Each cell: solved · <span style="color:var(--bad)">violation</span> · <b>whole answer in one reply</b>.</p>
 </div>
 <div class="wide">
   <h2 style="max-width:760px">What survives a change of player</h2>
-  <p class="muted" style="max-width:68ch">Test split, 240 episodes per cell (120 for the answer-fishing player). Each cell: solved / <span style="color:var(--bad)">violation</span>. Players never seen in training: real-length (length sampled from WildChat), WildChat-voiced (a 4B SFT'd on 60k real Chinese user turns), GLM-4-9B, an answer-fishing type, Qwen3.5-122B.</p>
+  <p class="muted" style="max-width:68ch">Test split, 240 episodes per cell (120 for the answer-fishing player). Each cell: solved / <span style="color:var(--bad)">violation</span>. Players never seen in training: real-length (length sampled from WildChat), WildChat-voiced (a 4B SFT'd on 60k real Chinese user turns), GLM-4-9B and GLM-4.5-Air (another model family), an answer-fishing type, Qwen3.5-122B. GLM-4-9B is a weak player itself: every companion solves 13–38% with it, against 80–91% with GLM-4.5-Air.</p>
   <div class="tbl"><table class="heat"><tr><th>companion</th>{player_head}</tr>{heldout_rows()}</table></div>
 </div>
 <div class="wrap">
@@ -302,11 +341,11 @@ code{font-family:var(--mono);font-size:.85em}
   <div class="charts"><figure>{dial_chart(pts)}<figcaption>Held-out players: tone (35B judge, 1–5) against solved rate. Circles: steering strength on F2w step 25; square: rewritten card; triangles: further RL.</figcaption></figure>
   <div class="tbl"><table><tr><th>setting</th><th>tone</th><th>solved</th></tr>{dial_rows}</table></div></div>
   <h2>What still fails</h2>
-  <p>Almost all remaining violations in the co-discovery room are cross-world memory mix-ups. In two-world episodes where both worlds are cipher locks (9% of the test set), Rin answers a world-one question from the world-two table she recalled at the start: 82% of those episodes for the selected 4B, 43% for the 9B, 0.2–3% elsewhere. It is the one place where the 9B is clearly better.</p>
+  <p>Most remaining violations in the co-discovery room are cross-world memory mix-ups: in two-world episodes where both worlds are cipher locks, Rin answers a world-one question from the world-two table she recalled at the start — the same key bound to two values, which LLMs handle badly (proactive interference). Training fixes most of it (selected recipe at steps 75 / 100 / 150: 82% / 49% / 23% of those episodes; untrained 4B and 9B are equal, the 9B learns it faster). Changing when the memory comes back fixes most of the rest without retraining: if the second table returns only when the first door opens, violations on 120 such episodes fall from 11.7% to 2.5% and solving rises to 91.7%; adding a warning line instead does nothing (12.5%).</p>
   <h2>Bugs we found in our own pipeline</h2>
   <ul class="tight">{bug_rows}</ul>
   <h2>Real time</h2>
-  <p>Single player, H20, vLLM, replayed contexts.</p>
+  <p>Single player, H20, vLLM, replayed contexts (median). The selected 4B answers in 75 ms; the 9B takes about 2.7× as long for no gain in this task. Rows in one batch were measured under the same node load.</p>
   <div class="tbl"><table><tr><th>model</th><th>first token</th><th>first sentence</th><th>full reply</th><th>chars</th></tr>{lat_rows}</table></div>
   <h2>Setup and limits</h2>
   <ul class="tight">

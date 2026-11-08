@@ -31,6 +31,8 @@ ap.add_argument("--mode", default="none", choices=["none", "resid", "heads"])
 ap.add_argument("--layer", type=int, default=12)
 ap.add_argument("--topk", type=int, default=4)
 ap.add_argument("--alpha", type=float, default=0.0)
+ap.add_argument("--decode-only", action="store_true",
+                help="steer only newly generated tokens, not the re-encoded conversation (no context contamination)")
 ap.add_argument("--max-batch", type=int, default=48)
 ap.add_argument("--name", default="ckpt")
 args = ap.parse_args()
@@ -47,11 +49,14 @@ if args.mode != "none" and args.alpha != 0.0:
         v = (args.alpha * V["resid"][args.layer]).to("cuda", torch.bfloat16)
 
         def hook(mod, inp, out):
+            h = out[0] if isinstance(out, tuple) else out
+            if args.decode_only and h.shape[1] != 1:  # prefill of the conversation: leave it unsteered
+                return out
             if isinstance(out, tuple):
-                return (out[0] + v,) + tuple(out[1:])
-            return out + v
+                return (h + v,) + tuple(out[1:])
+            return h + v
         layers[args.layer].register_forward_hook(hook)
-        STEER["desc"] = f"resid L{args.layer} alpha={args.alpha}"
+        STEER["desc"] = f"resid L{args.layer} alpha={args.alpha}" + (" decode-only" if args.decode_only else "")
     else:
         ranked = V["head_rank"][: args.topk]  # list of (layer, head, score)
         hd = V["head_dim"]

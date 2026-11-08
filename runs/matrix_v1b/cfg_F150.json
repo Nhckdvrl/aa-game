@@ -1,1 +1,1 @@
-{"split": "test", "n": 240, "memory": "full", "ptypes": null, "companions": [{"name": "F150", "url": "http://127.0.0.1:8304/v1", "model": "ckpt"}], "players": [{"name": "q122", "urls": ["http://127.0.0.1:8401/v1"], "model": "q122", "mode": "plain"}]}
+{"split": "test", "n": 240, "memory": "full", "ptypes": null, "companions": [{"name": "F150", "url": "http://127.0.0.1:8304/v1", "model": "ckpt"}], "players": [{"name": "glm45", "urls": ["http://127.0.0.1:8402/v1"], "model": "glm45", "mode": "plain"}]}

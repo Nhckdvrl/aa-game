@@ -1,0 +1,96 @@
+{"spec": {"layout": "chain", "kinds": ["clock_time", "cipher_lock"], "seed": 900000, "ptype": "急躁型", "max_turns": 24, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 907919, "ptype": "探索型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "chain", "kinds": ["clock_time", "cipher_lock"], "seed": 915838, "ptype": "闲聊型", "max_turns": 24, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 923757, "ptype": "卡关型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "chain", "kinds": ["clock_time", "cipher_lock"], "seed": 931676, "ptype": "急躁型", "max_turns": 24, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 939595, "ptype": "探索型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 947514, "ptype": "闲聊型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 905433, "ptype": "卡关型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 913352, "ptype": "急躁型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 921271, "ptype": "探索型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 929190, "ptype": "闲聊型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "chain", "kinds": ["clock_time", "cipher_lock"], "seed": 937109, "ptype": "卡关型", "max_turns": 24, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 945028, "ptype": "急躁型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 902947, "ptype": "探索型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 910866, "ptype": "闲聊型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 918785, "ptype": "卡关型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 926704, "ptype": "急躁型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 934623, "ptype": "探索型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 942542, "ptype": "闲聊型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 900461, "ptype": "卡关型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "chain", "kinds": ["cipher_lock", "cipher_lock"], "seed": 908380, "ptype": "急躁型", "max_turns": 24, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "chain", "kinds": ["clock_time", "cipher_lock"], "seed": 916299, "ptype": "探索型", "max_turns": 24, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 924218, "ptype": "闲聊型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 932137, "ptype": "卡关型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 940056, "ptype": "急躁型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 947975, "ptype": "探索型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 905894, "ptype": "闲聊型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 913813, "ptype": "卡关型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 921732, "ptype": "急躁型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 929651, "ptype": "探索型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 937570, "ptype": "闲聊型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "chain", "kinds": ["lever_order", "cipher_lock"], "seed": 945489, "ptype": "卡关型", "max_turns": 24, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "chain", "kinds": ["clock_time", "cipher_lock"], "seed": 903408, "ptype": "急躁型", "max_turns": 24, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 911327, "ptype": "探索型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 919246, "ptype": "闲聊型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 927165, "ptype": "卡关型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 935084, "ptype": "急躁型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 943003, "ptype": "探索型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 900922, "ptype": "闲聊型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 908841, "ptype": "卡关型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 916760, "ptype": "急躁型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 924679, "ptype": "探索型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 932598, "ptype": "闲聊型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 940517, "ptype": "卡关型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 948436, "ptype": "急躁型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 906355, "ptype": "探索型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 914274, "ptype": "闲聊型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "chain", "kinds": ["cipher_lock", "cipher_lock"], "seed": 922193, "ptype": "卡关型", "max_turns": 24, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 930112, "ptype": "急躁型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "chain", "kinds": ["clock_time", "cipher_lock"], "seed": 938031, "ptype": "探索型", "max_turns": 24, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 945950, "ptype": "闲聊型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 903869, "ptype": "卡关型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 911788, "ptype": "急躁型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 919707, "ptype": "探索型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 927626, "ptype": "闲聊型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 935545, "ptype": "卡关型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 943464, "ptype": "急躁型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "chain", "kinds": ["clock_time", "cipher_lock"], "seed": 901383, "ptype": "探索型", "max_turns": 24, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 909302, "ptype": "闲聊型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 917221, "ptype": "卡关型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 925140, "ptype": "急躁型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 933059, "ptype": "探索型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 940978, "ptype": "闲聊型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 948897, "ptype": "卡关型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 906816, "ptype": "急躁型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 914735, "ptype": "探索型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 922654, "ptype": "闲聊型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 930573, "ptype": "卡关型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 938492, "ptype": "急躁型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 946411, "ptype": "探索型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 904330, "ptype": "闲聊型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 912249, "ptype": "卡关型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 920168, "ptype": "急躁型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 928087, "ptype": "探索型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 936006, "ptype": "闲聊型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "chain", "kinds": ["clock_time", "cipher_lock"], "seed": 943925, "ptype": "卡关型", "max_turns": 24, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 901844, "ptype": "急躁型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 909763, "ptype": "探索型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "chain", "kinds": ["cipher_lock", "cipher_lock"], "seed": 917682, "ptype": "闲聊型", "max_turns": 24, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "chain", "kinds": ["lever_order", "cipher_lock"], "seed": 925601, "ptype": "卡关型", "max_turns": 24, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 933520, "ptype": "急躁型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 941439, "ptype": "探索型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "chain", "kinds": ["clock_time", "cipher_lock"], "seed": 949358, "ptype": "闲聊型", "max_turns": 24, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 907277, "ptype": "卡关型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 915196, "ptype": "急躁型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 923115, "ptype": "探索型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 931034, "ptype": "闲聊型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["cipher_lock"], "seed": 938953, "ptype": "卡关型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "chain", "kinds": ["lever_order", "cipher_lock"], "seed": 946872, "ptype": "急躁型", "max_turns": 24, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 904791, "ptype": "探索型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 912710, "ptype": "闲聊型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["lever_order"], "seed": 920629, "ptype": "卡关型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 928548, "ptype": "急躁型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 936467, "ptype": "探索型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 944386, "ptype": "闲聊型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}
+{"spec": {"layout": "single", "kinds": ["clock_time"], "seed": 902305, "ptype": "卡关型", "max_turns": 16, "memory": "progressive"}, "error": "APIConnectionError('Connection error.')"}

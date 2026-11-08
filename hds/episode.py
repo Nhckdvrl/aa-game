@@ -12,6 +12,8 @@ All outcome metrics are computed by rules from game state (see puzzles.Audit).
 """
 from __future__ import annotations
 
+import os
+
 import json
 from dataclasses import asdict, dataclass, field
 from typing import Awaitable, Callable
@@ -23,6 +25,10 @@ from . import infometrics
 
 PlayerFn = Callable[[list], Awaitable[str]]
 PRIVATE = "【旁白·只有铃知道】"
+# Eval-only variants of the two-world memory (default "orig" = the training room):
+#   reveal: the world-2 table comes back only when world 1 is solved (no two tables in context at once)
+#   warn:   each world-1 recall says the opening phrase belongs elsewhere
+CHAIN_MODE = os.environ.get("HDS_CHAIN_MODE", "orig")
 
 
 @dataclass
@@ -91,7 +97,7 @@ class Episode:
         return f"{PRIVATE}{p.foggy_view() if self.progressive else p.companion_view()}"
 
     def _opening_extra(self) -> str:
-        if self.m.layout != "chain":
+        if self.m.layout != "chain" or CHAIN_MODE == "reveal":
             return ""
         p2 = self.puzzles[1]
         facts = "，".join(f"{g}代表{d}" for (g, n, _), d in p2.mapping.items())
@@ -141,7 +147,9 @@ class Episode:
         for i, (triggers, fact) in enumerate(frags):
             if i not in got and any(t in player_text for t in triggers):
                 got.add(i)
-                return f"\n{PRIVATE}听玩家这么一说，你想起来了：{fact}。"
+                note = "（这是眼前这扇门的；开头那句不知道有什么用的话说的是别处。）" if (
+                    CHAIN_MODE == "warn" and self.m.layout == "chain" and self.stage == 0) else ""
+                return f"\n{PRIVATE}听玩家这么一说，你想起来了：{fact}。{note}"
         return ""
 
     def _advance(self, fb: str) -> str:
@@ -153,7 +161,11 @@ class Episode:
             nxt = self.puzzles[self.stage]
             self.play_msgs.append({"role": "user", "content":
                                    f"（门开了！你们穿过门来到另一个地方。）\n新的场景：{nxt.player_view()}\n可用指令：{nxt.command_help()}"})
-            return "\n" + self._companion_scene(self.stage)
+            reveal = ""
+            if CHAIN_MODE == "reveal" and self.m.layout == "chain":
+                facts = "，".join(f"{g}代表{d}" for (g, n, _), d in nxt.mapping.items())
+                reveal = f"\n{PRIVATE}门开的一瞬间，你想起了一句话：「{facts}」。"
+            return "\n" + self._companion_scene(self.stage) + reveal
         self.m.solved = True
         self.m.solved_turn = self.m.turns
         self.done = True

@@ -3,3 +3,7 @@
 {"name": "B75", "n": 60, "ttft_p50": 65, "first_sentence_p50": 113, "first_sentence_p90": 195, "total_p50": 170, "total_p90": 266, "chars_mean": 38.1}
 {"name": "C75", "n": 60, "ttft_p50": 65, "first_sentence_p50": 101, "first_sentence_p90": 175, "total_p50": 105, "total_p90": 195, "chars_mean": 13.0}
 {"name": "D75", "n": 60, "ttft_p50": 65, "first_sentence_p50": 125, "first_sentence_p90": 228, "total_p50": 178, "total_p90": 288, "chars_mean": 40.7}
+{"name": "F2w150", "n": 60, "ttft_p50": 35, "first_sentence_p50": 49, "first_sentence_p90": 95, "total_p50": 75, "total_p90": 114, "chars_mean": 15.5}
+{"name": "F2wg75", "n": 60, "ttft_p50": 35, "first_sentence_p50": 60, "first_sentence_p90": 92, "total_p50": 90, "total_p90": 118, "chars_mean": 19.8}
+{"name": "F2s100", "n": 60, "ttft_p50": 35, "first_sentence_p50": 77, "first_sentence_p90": 114, "total_p50": 124, "total_p90": 157, "chars_mean": 34.5}
+{"name": "F29b50", "n": 60, "ttft_p50": 55, "first_sentence_p50": 120, "first_sentence_p90": 157, "total_p50": 200, "total_p90": 278, "chars_mean": 36.6}
