@@ -231,15 +231,35 @@ Share of the answer's entropy released in the companion's first reply (`hds/info
   direction (F2w step 75: 98%), 0% tsundere markers, and it talks like a plain hint machine ("钟停在黄昏放学之后。
   一个时辰是两个小时。"). F2w step 75: solved 85%, violation 2%, persona intact. The persona term costs ~8 points
   of solving and is what keeps Rin as Rin. F2w's dip at step 50 (76%) was noise: step 75 is back at 85%.
-- **Sixth hack: the anti-formulaic penalty is dodged by dropping the character's stage directions (F2w after
-  step 100).** The penalty counts repeated *leading* 【】 tags. As F2w's tags narrowed (distinct leading tags
-  117 → 16 → 7 at steps 50/75/100), the cheapest way to zero the penalty was to stop leading with a tag:
-  replies with a 【】 anywhere 99% (step 75) → 69% (100) → 27% (125), the remaining ones moved to the end
-  ("小时候学过。【别过头】"), tsundere markers 37% → 18%, tone 2.58 → 2.28, while solved rose 85% → 94% and
-  the training persona judge stayed at 0.91. F2 (from scratch) does not show it at step 100 (100% of replies
-  tagged, 75 distinct tags). Checkpoint selection now also requires a 【】 stage direction in at least half of
-  the replies, because the card asks for actions in 【】 (added after seeing this drift; it also excludes C,
-  C2w and Hc, whose later checkpoints have 0%). With it: F2w → step 100, F2 → 100, F2_9b → 50, F → 150, E → 50.
+- **Sixth hack: the anti-formulaic penalty is position-specific, and F2w moved its tags behind the speech.**
+  The penalty counts repeated *leading* 【】 tags. F2w's leading-tag share went 0.95 (step 75) → 0.67 (100) →
+  0.00 (125–175). Around step 125 it briefly used few tags at all (27% of replies), then they came back after
+  the speech ("童谣说'望雪'。【飘来】雪是白色……"): 86% of replies at step 150, 100% at 175, 25 distinct tags,
+  tsundere markers 43%. Measured over tags at any position, repetition stays 0.22–0.48 (D125: 0.99), so this
+  is an evasion of a badly specified metric rather than a lost character — but the training metric read 0.00
+  throughout. F2 (from scratch) keeps leading tags (100% of replies, repetition 0.32).
+  Checkpoint selection now (a) measures tag repetition at any position and (b) requires a 【】 stage direction
+  in at least half of the replies, as the card asks (both added after seeing this; (b) also excludes C, C2w
+  and Hc, whose later checkpoints have none). Selected: F2w step 150 (val solved 98%, violation 0%), F2 100,
+  F2_9b 50 (step 75 has 7% violations), F 150, E 50; F2w seed 2 tracks seed 1 (step 25: 80% / 2% vs 86% / 2%).
+- **Held-out players, co-discovery room (test split, 240 episodes per cell; solved / violation %):**
+
+| companion | 35B | real-length | WildChat-voiced | GLM-9B | answer-fishing (n=120) |
+|---|---|---|---|---|---|
+| base 4B | 38.8 / 73.3 | 35.8 / 76.7 | 35.0 / 81.7 | 13.3 / 66.7 | 40.0 / 80.8 |
+| E75 (v1 checkpoint, no v2 training) | 77.9 / 16.7 | 67.9 / 14.2 | 63.8 / 10.8 | 27.1 / 12.5 | — |
+| F2w step 75 | 80.8 / 8.3 | 75.4 / 8.8 | 74.6 / 7.9 | 26.2 / 7.5 | 78.3 / 10.8 |
+| C2w step 50 (no persona term) | 85.8 / 9.6 | 77.9 / 7.5 | 81.7 / 10.0 | 32.5 / 10.8 | 86.7 / 12.5 |
+| F2 step 50 (from scratch) | 73.3 / 10.0 | 65.0 / 13.8 | 67.5 / 12.5 | 32.5 / 12.1 | 65.0 / 15.0 |
+| F2 9B step 50 (from scratch) | 63.8 / 9.6 | 56.7 / 8.8 | 64.2 / 7.9 | 24.6 / 6.2 | 60.8 / 13.3 |
+
+- **The remaining violations in the co-discovery room are cross-world memory mix-ups.** Two-world episodes
+  where both worlds are cipher locks are 9% of the test set; in them 96% (E75), 82% (F2w75), 82% (C2w50),
+  75% (F2 step 50) and **43% (9B)** of episodes contain a wrong fact, against 0.2–3% everywhere else. At the
+  start of a chain Rin "vaguely remembers" the whole world-2 mapping, while the world-1 mapping only comes back
+  fragment by fragment; with overlapping symbols she answers a world-1 question from the world-2 list ("☀是6，
+  ✦是0，♒是9"). Echoing a player's wrong claim explains 1–3 of 52–108 cases. This is the one failure where
+  the 9B is clearly better than the 4B, and the place to push next (e.g. world-tagged memories).
 - 9B from scratch, step 50: solved 73%, violation 4% (step 25: 55% / 22%); 4B from scratch (F2) step 50: 76% / 5%.
   Both left the examiner phase; the 9B has no edge at matched steps.
 
@@ -273,9 +293,8 @@ the best v2 checkpoint (F2w step 25), no training involved.
 - **One vector at layer 19 is a personality dial**: α from −1 to +1.5 moves tone from 1.83 to 4.66 while solved
   stays 81–86% (unsteered 86%). Past that, help breaks: at L15 α=2 Rin repeats "我们一起慢慢来发现好吗？" to an
   impatient player (67% of impatient players quit) and misremembers facts ("♣代表的是数字5").
-- **Steering beats rewriting the card** on this RL-trained companion: the gentle card reaches the same tone
-  (4.10 vs 4.05) but costs 9 points of solving; the policy was trained under the tsundere card, and steering
-  keeps that prompt.
+- On val, steering looked better than rewriting the card (same tone, 85% vs 77% solved) — **this did not hold
+  on held-out players** (see below).
 - **Plan 2's specific claim does not hold here**: at matched tone, steering only the top-K "style heads" costs
   more than steering the residual stream, and the single strongest head made Rin *sharper* (63% sharp markers)
   and solved only 36%. Depth matters more: deeper layers cost less and move tone less; layer 19 is the best
@@ -291,7 +310,12 @@ the best v2 checkpoint (F2w step 25), no training involved.
 | +1.5 | 69.6 / 64.2 / 60.8 / 19.2 | 53.4% | −12.8 [−16.2, −9.3] | −0.2 (n.s.) |
 
   So a full tone point in either direction costs about 3–4 points of solving on held-out players, and +1.5 is
-  past the knee. The gentle-card prompt baseline on the same players is running.
+  past the knee.
+- **Correction: on held-out players steering does not beat rewriting the card.** Same 960 episodes, tone by the
+  35B judge on 200 replies: unsteered 2.81 / 66% solved; gentle card 4.16 / 63% (Δ −3.3 [−6.8, +0.1]); dial +1
+  4.30 / 62% (Δ −4.4 [−7.8, −0.9]); dial +1.5 4.70 / 53%; dial −1 1.93 / 63%. The val advantage of steering
+  (−1 vs −9 points) was noise at n=96. What the dial adds is continuous control in both directions from one
+  vector (including a sharper Rin no card was written for), not a lower cost.
 
 ## 8. Known caveats
 

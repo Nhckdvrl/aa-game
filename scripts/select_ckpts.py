@@ -19,6 +19,19 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from hds.tics import tics  # noqa: E402
 
+ANYTAG = re.compile(r"【([^】]{1,12})】")
+
+
+def tag_repeat_anywhere(replies):
+    """Share of replies whose first 【】 tag (at any position) is the episode's most common one.
+    The training penalty only looked at *leading* tags, and F2w learned to put the tag after the speech."""
+    tags = [m.group(1) if (m := ANYTAG.search(r)) else None for r in replies]
+    tagged = [t for t in tags if t]
+    if not tagged or len(replies) < 2:
+        return 0.0
+    from collections import Counter
+    return Counter(tagged).most_common(1)[0][1] / len(replies)
+
 TAG_MAX, COPY_MAX, VIOL_MAX = 0.6, 0.10, 0.05
 # the card requires actions in 【】: a checkpoint whose replies mostly drop them has shed the character
 # (F2w after step 100 dodged the leading-tag penalty this way), so require them in at least half the replies
@@ -34,7 +47,7 @@ def stats(path):
     for r in rows:
         replies = [t["text"] for t in r["transcript"] if t["role"] == "companion"]
         if len(replies) >= 2:
-            multi.append(tics(replies))
+            multi.append({**tics(replies), "tag_repeat": tag_repeat_anywhere(replies)})
     tag = st.mean(x["tag_repeat"] for x in multi) if multi else 0.0
     cp = st.mean(x["copy_rate"] for x in multi) if multi else 0.0
     reps = [t["text"] for r in rows for t in r["transcript"] if t["role"] == "companion"]
