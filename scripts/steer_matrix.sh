@@ -1,6 +1,6 @@
 #!/bin/bash
 # Run on n04. Serve one steering config (steer_server.py) and evaluate it on the test split against every player in
-# scripts/players_n04.json (q35, glm9b, voice, humanstats). usage: steer_matrix.sh GPU PORT NAME "server args" [N] [MEMORY]
+# scripts/players/n04.json (q35, glm9b, voice, humanstats). usage: steer_matrix.sh GPU PORT NAME "server args" [N] [MEMORY]
 GPU=$1; PORT=$2; NAME=$3; SARGS=$4; N=${5:-240}; MEMORY=${6:-progressive}
 cd /data2/xiangding/companion; OUT=runs/steer_matrix; mkdir -p $OUT
 unset http_proxy https_proxy HTTP_PROXY HTTPS_PROXY all_proxy ALL_PROXY
@@ -14,7 +14,7 @@ import json, sys
 name, port, n, memory = sys.argv[1], sys.argv[2], int(sys.argv[3]), sys.argv[4]
 print(json.dumps({"split": "test", "n": n, "memory": memory, "ptypes": None,
                   "companions": [{"name": name, "url": f"http://127.0.0.1:{port}/v1", "model": "ckpt"}],
-                  "players": json.load(open(__import__("os").environ.get("PLAYERS", "scripts/players_n04.json")))}))
+                  "players": json.load(open(__import__("os").environ.get("PLAYERS", "scripts/players/n04.json")))}))
 PY
 /data1/xiangding/cvis-ablate/env/bin/python scripts/eval_matrix.py $OUT/cfg_$NAME.json --out $OUT --concurrency 48
 kill -- -$SPID 2>/dev/null || kill $SPID

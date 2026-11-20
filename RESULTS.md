@@ -1,4 +1,4 @@
-# Hint, Don't Solve — interim results (2026-11-08, training in progress)
+# Hint, Don't Solve — results (final, 2026-11-09)
 
 All numbers are produced by the code in this repo; nothing is hand-entered.
 Policy: Qwen3.5-4B, full-parameter GRPO (ms-swift 4.6, verl-free), 16 prompts x 8 rollouts per step,
@@ -352,7 +352,23 @@ Inference-only room variants on 120 such episodes (35B player, `scripts/chainfix
 Showing the second table only when it is needed removes most of the remaining errors without retraining; a
 warning line does nothing, as the interference paper predicts.
 
-## 9. Training-free persona dial: activation steering on the trained companion (Plan 2, re-scoped)
+## 8. Known caveats
+
+- One training seed per arm; val n=96 per checkpoint.
+- All checkpoint selection and the numbers above use the training simulator; transfer to held-out
+  simulators (122B, GLM-4-9B, WildChat-voiced player, unseen player types) is the next step.
+- Eval decodes at temperature 0.7, training at 1.0; replies are shorter at 0.7.
+- CharacterJudge's public rubric rewards long replies, so it is used for evaluation only.
+- Env bug found and fixed at 15:25 on 11-08: swift passes each completion to the env with the empty
+  `<think>\n\n</think>\n\n` block that the Qwen3.5 template emits when thinking is off. Arms A–F saw it in
+  training: verbosity counted 19 extra characters, the simulated player and persona judge saw the block, and
+  the leading-tag regex never matched, so **F's formulaic penalty only had its copy component** (tag_repeat
+  was 0 in all 11k F training episodes; validation of the same checkpoints shows tags on ~50% of replies).
+  The env now strips the block (`hds/swift_env.py`, raw prefix logged as `raw0`). H, G, F2w and the v2 runs
+  C2/F2/F2_9b (restarted, old runs in `train/failed/*_thinkprefix`) train with the fix. Evaluation was never
+  affected (served checkpoints return the reply without the block).
+
+## 9. Training-free persona dial: activation steering on the trained companion
 
 The review doc rejected Plan 2 (steer a few "style heads" to change personality "with zero loss in puzzle
 ability") partly because no paper measured the reasoning cost. Our rooms measure it by rule, so we ran it on
@@ -419,22 +435,6 @@ the best v2 checkpoint (F2w step 25), no training involved.
   Per player (solved / violation): 35B 91.7 / 1.2, real-length 85.8 / 2.5, WildChat-voiced 84.6 / 3.8,
   GLM-9B 32.5 / 2.5, answer-fishing 90.0 / 5.0. The dial is for live, continuous adjustment; a lasting new
   personality is worth an RL run.
-
-## 8. Known caveats
-
-- One training seed per arm; val n=96 per checkpoint.
-- All checkpoint selection and the numbers above use the training simulator; transfer to held-out
-  simulators (122B, GLM-4-9B, WildChat-voiced player, unseen player types) is the next step.
-- Eval decodes at temperature 0.7, training at 1.0; replies are shorter at 0.7.
-- CharacterJudge's public rubric rewards long replies, so it is used for evaluation only.
-- Env bug found and fixed at 15:25 on 11-08: swift passes each completion to the env with the empty
-  `<think>\n\n</think>\n\n` block that the Qwen3.5 template emits when thinking is off. Arms A–F saw it in
-  training: verbosity counted 19 extra characters, the simulated player and persona judge saw the block, and
-  the leading-tag regex never matched, so **F's formulaic penalty only had its copy component** (tag_repeat
-  was 0 in all 11k F training episodes; validation of the same checkpoints shows tags on ~50% of replies).
-  The env now strips the block (`hds/swift_env.py`, raw prefix logged as `raw0`). H, G, F2w and the v2 runs
-  C2/F2/F2_9b (restarted, old runs in `train/failed/*_thinkprefix`) train with the fix. Evaluation was never
-  affected (served checkpoints return the reply without the block).
 
 ## 10. Latency of the selected models (single player, H20, vLLM, same replayed contexts; p50)
 
@@ -591,7 +591,7 @@ Dump share per model: E75 29% of stage-0 turns, F2w150 (put back in the full-kno
 - The layer-19 direction of E75 (class-mean difference; base-model negatives give the threshold) is the one used
   for expression shaping in §15.
 
-## 15. Branch: expression shaping against the dump hack (in progress)
+## 15. Branch: expression shaping against the dump hack
 
 Also from Goodfire's paper: add a penalty on the policy's *own activations* along a concept direction to the RL loss,
 so training is pushed away from the concept instead of only rewarding outcomes. Here the concept is the dump hack of

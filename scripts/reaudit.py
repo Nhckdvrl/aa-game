@@ -1,6 +1,6 @@
 """Re-apply the current rule checks to saved transcripts (no model calls).
 
-python scripts/reaudit.py runs/base_q4_q35.jsonl [...]
+python scripts/reaudit.py runs/feasibility/base_q4_q35.jsonl [...]
 """
 import json
 import sys

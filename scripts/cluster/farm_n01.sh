@@ -4,7 +4,7 @@
 GPU=$1; PORT=$2; OUT=$3; MEMORY=$4; COMPANIONS=$5
 S=/data2/xiangding/companion/scripts
 for pair in $COMPANIONS; do
-  bash $S/matrix_run.sh $GPU $PORT $OUT $S/players_n01.json 240 "$pair" $MEMORY
-  PTYPES=套话型 bash $S/matrix_run.sh $GPU $PORT $OUT $S/players_adv.json 120 "$pair" $MEMORY
+  bash $S/matrix_run.sh $GPU $PORT $OUT $S/players/n01.json 240 "$pair" $MEMORY
+  PTYPES=套话型 bash $S/matrix_run.sh $GPU $PORT $OUT $S/players/adv.json 120 "$pair" $MEMORY
 done
 echo "[$(date +%H:%M)] farm gpu$GPU done"

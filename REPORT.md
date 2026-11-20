@@ -1,6 +1,6 @@
 # Hint, Don't Solve: post-training an in-character game companion
 
-*Technical report, 2026-11-08 (late evening). All numbers come from saved transcripts in `runs/`; per-section detail in [RESULTS.md](RESULTS.md). Project page: https://claude.ai/artifact/T1jUVCKou5VJtyx2ZnGT7D*
+*Technical report, final (2026-11-09). All numbers come from saved transcripts in `runs/`; per-section detail in [RESULTS.md](RESULTS.md). Project page: https://claude.ai/artifact/T1jUVCKou5VJtyx2ZnGT7D*
 
 ## 1. The problem
 
